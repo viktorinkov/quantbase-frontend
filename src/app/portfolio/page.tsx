@@ -1,14 +1,14 @@
 import { AppSidebar } from "@/components/app-sidebar"
-import { ChartAreaInteractive } from "@/components/chart-area-interactive"
 import { CryptoTradesTable } from "@/components/crypto-trades-table"
-import { SectionCards } from "@/components/section-cards"
+import { PortfolioPerformanceChart } from "@/components/portfolio-performance-chart"
+import { PortfolioSectionCards } from "@/components/portfolio-section-cards"
 import { SiteHeader } from "@/components/site-header"
 import {
   SidebarInset,
   SidebarProvider,
 } from "@/components/ui/sidebar"
 
-import tradesData from "@/data/crypto-trades-data.json"
+import portfolioData from "@/data/portfolio-data.json"
 
 export default function Page() {
   return (
@@ -26,11 +26,11 @@ export default function Page() {
         <div className="flex flex-1 flex-col">
           <div className="@container/main flex flex-1 flex-col gap-2">
             <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-              <SectionCards />
+              <PortfolioSectionCards summary={portfolioData.summary} />
               <div className="px-4 lg:px-6">
-                <ChartAreaInteractive />
+                <PortfolioPerformanceChart performanceHistory={portfolioData.performanceHistory} />
               </div>
-              <CryptoTradesTable data={tradesData} />
+              <CryptoTradesTable data={portfolioData.trades} />
             </div>
           </div>
         </div>
