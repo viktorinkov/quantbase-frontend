@@ -141,7 +141,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
               <a href="#">
-                <IconInnerShadowTop className="!size-5" />
+                <img src="/ducky.svg" alt="Ducky Logo" className="!size-5" />
                 <span className="text-base font-semibold">QuantBase</span>
               </a>
             </SidebarMenuButton>
