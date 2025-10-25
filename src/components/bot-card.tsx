@@ -3,9 +3,11 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell } from "recharts"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { TrendingUp, Users, DollarSign } from "lucide-react"
+import { TrendingUp, Users, DollarSign, Check } from "lucide-react"
+import { useSelectedBot } from "@/contexts/selected-bot-context"
 
 interface TopWin {
   pair: string
@@ -36,6 +38,7 @@ interface BotCardProps {
 }
 
 export function BotCard({
+  id,
   name,
   image,
   creator,
@@ -45,6 +48,9 @@ export function BotCard({
   dailyPerformance,
   topWinsToday,
 }: BotCardProps) {
+  const { selectedBot, selectBot, deselectBot } = useSelectedBot()
+  const isSelected = selectedBot?.id === id
+
   const formatNumber = (num: number) => {
     if (num >= 1000000) {
       return `$${(num / 1000000).toFixed(1)}M`
@@ -67,6 +73,24 @@ export function BotCard({
     },
   }
 
+  const handleToggleSelect = () => {
+    if (isSelected) {
+      deselectBot()
+    } else {
+      selectBot({
+        id,
+        name,
+        image,
+        creator,
+        monthlyPerformance,
+        totalVolume,
+        userCount,
+        dailyPerformance,
+        topWinsToday,
+      })
+    }
+  }
+
   return (
     <Card className="overflow-hidden">
       <CardHeader className="pb-4">
@@ -86,12 +110,28 @@ export function BotCard({
               </div>
             </div>
           </div>
-          <Badge
-            variant={monthlyPerformance >= 0 ? "default" : "destructive"}
-            className="text-sm"
-          >
-            {monthlyPerformance >= 0 ? "+" : ""}{monthlyPerformance.toFixed(1)}%
-          </Badge>
+          <div className="flex items-center gap-2">
+            <Badge
+              variant={monthlyPerformance >= 0 ? "default" : "destructive"}
+              className="text-sm"
+            >
+              {monthlyPerformance >= 0 ? "+" : ""}{monthlyPerformance.toFixed(1)}%
+            </Badge>
+            <Button
+              onClick={handleToggleSelect}
+              variant={isSelected ? "default" : "outline"}
+              size="sm"
+            >
+              {isSelected ? (
+                <>
+                  <Check className="mr-2 h-4 w-4" />
+                  Currently Selected
+                </>
+              ) : (
+                "Select Bot"
+              )}
+            </Button>
+          </div>
         </div>
       </CardHeader>
       <CardContent>
