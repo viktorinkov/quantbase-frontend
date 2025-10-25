@@ -1,14 +1,12 @@
 import { AppSidebar } from "@/components/app-sidebar"
-import { ChartAreaInteractive } from "@/components/chart-area-interactive"
-import { DataTable } from "@/components/data-table"
-import { SectionCards } from "@/components/section-cards"
+import { BotCard } from "@/components/bot-card"
 import { SiteHeader } from "@/components/site-header"
 import {
   SidebarInset,
   SidebarProvider,
 } from "@/components/ui/sidebar"
 
-import data from "../dashboard/data.json"
+import botsData from "@/data/bots.json"
 
 export default function Page() {
   return (
@@ -25,12 +23,29 @@ export default function Page() {
         <SiteHeader />
         <div className="flex flex-1 flex-col">
           <div className="@container/main flex flex-1 flex-col gap-2">
-            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-              <SectionCards />
-              <div className="px-4 lg:px-6">
-                <ChartAreaInteractive />
+            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6 px-4 lg:px-6">
+              <div className="mb-4">
+                <h1 className="text-3xl font-bold tracking-tight">Bot Marketplace</h1>
+                <p className="text-muted-foreground mt-2">
+                  Discover and deploy automated trading bots from top creators
+                </p>
               </div>
-              <DataTable data={data} />
+              <div className="grid gap-6">
+                {botsData.map((bot) => (
+                  <BotCard
+                    key={bot.id}
+                    id={bot.id}
+                    name={bot.name}
+                    image={bot.image}
+                    creator={bot.creator}
+                    monthlyPerformance={bot.monthlyPerformance}
+                    totalVolume={bot.totalVolume}
+                    userCount={bot.userCount}
+                    dailyPerformance={bot.dailyPerformance}
+                    topWinsToday={bot.topWinsToday}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>
