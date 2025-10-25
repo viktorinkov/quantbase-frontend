@@ -64,14 +64,21 @@ export function CryptoChart({
   const filteredData = chartData.filter((item) => {
     const date = new Date(item.date)
     const referenceDate = new Date(chartData[chartData.length - 1].date)
-    let daysToSubtract = 90
-    if (timeRange === "30d") {
-      daysToSubtract = 30
+    let millisecondsToSubtract = 90 * 24 * 60 * 60 * 1000 // 90 days default
+
+    if (timeRange === "1m") {
+      millisecondsToSubtract = 60 * 1000 // 1 minute
+    } else if (timeRange === "1h") {
+      millisecondsToSubtract = 60 * 60 * 1000 // 1 hour
+    } else if (timeRange === "1d") {
+      millisecondsToSubtract = 24 * 60 * 60 * 1000 // 1 day
     } else if (timeRange === "7d") {
-      daysToSubtract = 7
+      millisecondsToSubtract = 7 * 24 * 60 * 60 * 1000 // 7 days
+    } else if (timeRange === "30d") {
+      millisecondsToSubtract = 30 * 24 * 60 * 60 * 1000 // 30 days
     }
-    const startDate = new Date(referenceDate)
-    startDate.setDate(startDate.getDate() - daysToSubtract)
+
+    const startDate = new Date(referenceDate.getTime() - millisecondsToSubtract)
     return date >= startDate
   })
 
@@ -98,11 +105,14 @@ export function CryptoChart({
             value={timeRange}
             onValueChange={setTimeRange}
             variant="outline"
-            className="hidden *:data-[slot=toggle-group-item]:!px-4 @[767px]/card:flex"
+            className="hidden *:data-[slot=toggle-group-item]:!px-3 @[767px]/card:flex"
           >
-            <ToggleGroupItem value="90d">Last 3 months</ToggleGroupItem>
-            <ToggleGroupItem value="30d">Last 30 days</ToggleGroupItem>
-            <ToggleGroupItem value="7d">Last 7 days</ToggleGroupItem>
+            <ToggleGroupItem value="1m">1 Min</ToggleGroupItem>
+            <ToggleGroupItem value="1h">1 Hour</ToggleGroupItem>
+            <ToggleGroupItem value="1d">1 Day</ToggleGroupItem>
+            <ToggleGroupItem value="7d">7 Days</ToggleGroupItem>
+            <ToggleGroupItem value="30d">30 Days</ToggleGroupItem>
+            <ToggleGroupItem value="90d">3 Months</ToggleGroupItem>
           </ToggleGroup>
           <Select value={timeRange} onValueChange={setTimeRange}>
             <SelectTrigger
@@ -113,14 +123,23 @@ export function CryptoChart({
               <SelectValue placeholder="Last 3 months" />
             </SelectTrigger>
             <SelectContent className="rounded-xl">
-              <SelectItem value="90d" className="rounded-lg">
-                Last 3 months
+              <SelectItem value="1m" className="rounded-lg">
+                Last 1 minute
+              </SelectItem>
+              <SelectItem value="1h" className="rounded-lg">
+                Last 1 hour
+              </SelectItem>
+              <SelectItem value="1d" className="rounded-lg">
+                Last 1 day
+              </SelectItem>
+              <SelectItem value="7d" className="rounded-lg">
+                Last 7 days
               </SelectItem>
               <SelectItem value="30d" className="rounded-lg">
                 Last 30 days
               </SelectItem>
-              <SelectItem value="7d" className="rounded-lg">
-                Last 7 days
+              <SelectItem value="90d" className="rounded-lg">
+                Last 3 months
               </SelectItem>
             </SelectContent>
           </Select>
@@ -155,6 +174,18 @@ export function CryptoChart({
               minTickGap={32}
               tickFormatter={(value) => {
                 const date = new Date(value)
+                if (timeRange === "1m" || timeRange === "1h") {
+                  return date.toLocaleTimeString("en-US", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                  })
+                } else if (timeRange === "1d") {
+                  return date.toLocaleTimeString("en-US", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })
+                }
                 return date.toLocaleDateString("en-US", {
                   month: "short",
                   day: "numeric",
@@ -166,7 +197,24 @@ export function CryptoChart({
               content={
                 <ChartTooltipContent
                   labelFormatter={(value) => {
-                    return new Date(value).toLocaleDateString("en-US", {
+                    const date = new Date(value)
+                    if (timeRange === "1m" || timeRange === "1h") {
+                      return date.toLocaleString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                      })
+                    } else if (timeRange === "1d") {
+                      return date.toLocaleString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })
+                    }
+                    return date.toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
                       year: "numeric",
