@@ -44,22 +44,22 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "#",
+      url: "/dashboard",
       icon: IconDashboard,
     },
     {
       title: "Crypto",
-      url: "#",
+      url: "/crypto",
       icon: IconGraph,
     },
     {
       title: "Bot Marketplace",
-      url: "#",
+      url: "/bot-marketplace",
       icon: IconBuildingStore,
     },
     {
       title: "Portfolio",
-      url: "#",
+      url: "/portfolio",
       icon: IconFolder,
     },
   ],
