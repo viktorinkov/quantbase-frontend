@@ -244,7 +244,7 @@ export function BotParameterCustomizer({
                 ) : (
                   <>
                     <Wand2 className="h-4 w-4 mr-2" />
-                    Apply Natural Language Settings
+                    Create Custom Model
                   </>
                 )}
               </Button>
