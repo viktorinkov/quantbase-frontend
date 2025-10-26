@@ -53,6 +53,7 @@ interface BotCardProps {
   id: string
   name: string
   modelName: string
+  image?: string
   todaysTrades: BotTrade[]
   stats?: BotStats
   index?: number
@@ -62,6 +63,7 @@ export function BotCard({
   id,
   name,
   modelName,
+  image,
   todaysTrades,
   stats,
   index = 0,
@@ -69,27 +71,52 @@ export function BotCard({
   const { selectedBot, selectBot, deselectBot } = useSelectedBot()
   const isSelected = selectedBot?.id === id
 
-  // Array of bot avatar images that alternate
-  const avatarImages = [
+  // Fallback avatar images if bot doesn't have an image
+  const fallbackAvatars = [
     "https://api.dicebear.com/7.x/bottts/svg?seed=bot1&backgroundColor=3b82f6",
     "https://api.dicebear.com/7.x/bottts/svg?seed=bot2&backgroundColor=a855f7",
     "https://api.dicebear.com/7.x/bottts/svg?seed=bot3&backgroundColor=22c55e",
     "https://api.dicebear.com/7.x/bottts/svg?seed=bot4&backgroundColor=f97316",
     "https://api.dicebear.com/7.x/bottts/svg?seed=bot5&backgroundColor=ec4899",
     "https://api.dicebear.com/7.x/bottts/svg?seed=bot6&backgroundColor=06b6d4",
+    "https://api.dicebear.com/7.x/bottts/svg?seed=bot7&backgroundColor=e11d48",
+    "https://api.dicebear.com/7.x/bottts/svg?seed=bot8&backgroundColor=8b5cf6",
+    "https://api.dicebear.com/7.x/bottts/svg?seed=bot9&backgroundColor=14b8a6",
+    "https://api.dicebear.com/7.x/bottts/svg?seed=bot10&backgroundColor=f59e0b",
+    "https://api.dicebear.com/7.x/bottts/svg?seed=bot11&backgroundColor=ef4444",
+    "https://api.dicebear.com/7.x/bottts/svg?seed=bot12&backgroundColor=10b981",
+    "https://api.dicebear.com/7.x/bottts/svg?seed=bot13&backgroundColor=6366f1",
+    "https://api.dicebear.com/7.x/bottts/svg?seed=bot14&backgroundColor=ec4899",
+    "https://api.dicebear.com/7.x/bottts/svg?seed=bot15&backgroundColor=8b5cf6",
+    "https://api.dicebear.com/7.x/bottts/svg?seed=bot16&backgroundColor=6366f1",
+    "https://api.dicebear.com/7.x/bottts/svg?seed=bot17&backgroundColor=a78bfa",
+    "https://api.dicebear.com/7.x/bottts/svg?seed=bot18&backgroundColor=f97316",
   ]
 
-  const avatarColors = [
+  const fallbackColors = [
     "bg-blue-500",
     "bg-purple-500",
     "bg-green-500",
     "bg-orange-500",
     "bg-pink-500",
     "bg-cyan-500",
+    "bg-red-600",
+    "bg-purple-600",
+    "bg-teal-500",
+    "bg-amber-500",
+    "bg-red-500",
+    "bg-emerald-500",
+    "bg-indigo-500",
+    "bg-pink-500",
+    "bg-purple-600",
+    "bg-indigo-500",
+    "bg-purple-400",
+    "bg-orange-500",
   ]
 
-  const avatarImage = avatarImages[index % avatarImages.length]
-  const avatarColor = avatarColors[index % avatarColors.length]
+  // Use bot's stored image if available, otherwise fallback to rotating avatars
+  const avatarImage = image || fallbackAvatars[index % fallbackAvatars.length]
+  const avatarColor = fallbackColors[index % fallbackColors.length]
 
   const handleToggleSelect = () => {
     if (isSelected) {
