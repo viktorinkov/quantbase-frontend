@@ -114,48 +114,6 @@ export function PortfolioHistoryChart({ history }: PortfolioHistoryChartProps) {
     return filtered
   }, [chartData, timeRange])
 
-  // Calculate dynamic Y-axis domains based on the amplitude of the selected period
-  const yAxisDomains = React.useMemo(() => {
-    if (filteredData.length === 0) {
-      return { usd: [0, 100000], sol: [0, 10] }
-    }
-
-    const usdValues = filteredData.map(d => d.usd)
-    const solValues = filteredData.map(d => d.sol)
-
-    const usdMin = Math.min(...usdValues)
-    const usdMax = Math.max(...usdValues)
-    const solMin = Math.min(...solValues)
-    const solMax = Math.max(...solValues)
-
-    // Calculate the amplitude (range) of the data for the period
-    const usdAmplitude = usdMax - usdMin
-    const solAmplitude = solMax - solMin
-
-    // If amplitude is zero or very tiny, set a minimum visible range
-    const minUsdRange = 1 // Minimum $1 range to show
-    const minSolRange = 0.01 // Minimum 0.01 SOL range to show
-
-    // Set domain to exactly min and max of the data (the actual amplitude)
-    // This creates the tightest possible view of the variations
-    const usdDomain = usdAmplitude > 0
-      ? [usdMin, usdMax]
-      : [usdMin - minUsdRange / 2, usdMax + minUsdRange / 2]
-
-    const solDomain = solAmplitude > 0
-      ? [solMin, solMax]
-      : [solMin - minSolRange / 2, solMax + minSolRange / 2]
-
-    console.log('Y-axis calculation:', {
-      usd: { min: usdMin, max: usdMax, amplitude: usdAmplitude, domain: usdDomain },
-      sol: { min: solMin, max: solMax, amplitude: solAmplitude, domain: solDomain }
-    })
-
-    return {
-      usd: usdDomain,
-      sol: solDomain
-    }
-  }, [filteredData])
 
   return (
     <Card className="pt-0">
@@ -242,18 +200,17 @@ export function PortfolioHistoryChart({ history }: PortfolioHistoryChartProps) {
                 orientation="left"
                 tickLine={false}
                 axisLine={false}
-                domain={yAxisDomains.usd}
-                width={80}
-                tickFormatter={(value) => `$${value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                tick={false}
+                width={0}
               />
               <YAxis
                 yAxisId="sol"
                 orientation="right"
                 tickLine={false}
                 axisLine={false}
-                domain={yAxisDomains.sol}
-                width={100}
-                tickFormatter={(value) => `${value.toFixed(3)} SOL`}
+                tick={false}
+                width={0}
+                // tickFormatter={(value) => `${value.toFixed(3)} SOL`}
               />
               <ChartTooltip
                 cursor={false}
