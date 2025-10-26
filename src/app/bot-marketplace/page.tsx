@@ -49,8 +49,8 @@ export default function Page() {
             id: bot.id,
             name: bot.name,
             modelName: bot.name, // Use name as modelName for now
-            dailyPerformance: [], // TODO: Add performance data from backend
-            todaysTradesToday: [] // TODO: Add trades data from backend
+            todaysTrades: bot.todaysTrades || [],
+            stats: bot.stats
           }))
           setBots(convertedBots)
         } else {
@@ -79,8 +79,7 @@ export default function Page() {
       const botWithDefaults: Bot = {
         ...newBot,
         modelName: newBot.name,
-        dailyPerformance: [],
-        todaysTradesToday: []
+        todaysTrades: []
       }
       
       setBots(prev => [...prev, botWithDefaults])
@@ -94,8 +93,8 @@ export default function Page() {
           id: bot.id,
           name: bot.name,
           modelName: bot.name,
-          dailyPerformance: [],
-          todaysTradesToday: []
+          todaysTrades: bot.todaysTrades || [],
+          stats: bot.stats
         }))
         setBots(convertedBots)
       }
@@ -146,13 +145,15 @@ export default function Page() {
                 </div>
               )}
               <div className="grid gap-6">
-                {bots.map((bot) => (
+                {bots.map((bot, index) => (
                   <BotCard
                     key={bot.id}
                     id={bot.id}
                     name={bot.name}
                     modelName={bot.modelName}
                     todaysTrades={bot.todaysTrades}
+                    stats={bot.stats}
+                    index={index}
                   />
                 ))}
               </div>

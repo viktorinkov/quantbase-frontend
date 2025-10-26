@@ -33,7 +33,7 @@ export function SelectedBotInfo() {
               <p className="text-muted-foreground">
                 No trading bot selected. Visit the{" "}
                 <a href="/bot-marketplace" className="text-primary underline underline-offset-4 hover:text-primary/80">
-                  Bot Marketplace
+                  Model Marketplace
                 </a>{" "}
                 to select a bot.
               </p>
