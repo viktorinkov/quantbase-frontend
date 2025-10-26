@@ -4,7 +4,17 @@ import * as React from "react"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Check } from "lucide-react"
+import {
+  Check,
+  TrendingUp,
+  TrendingDown,
+  DollarSign,
+  Activity,
+  Trophy,
+  BarChart3,
+  Info,
+  Settings
+} from "lucide-react"
 import { useSelectedBot } from "@/contexts/selected-bot-context"
 import { BotTradesTable } from "@/components/bot-trades-table"
 
@@ -143,10 +153,10 @@ export function BotCard({
               </AvatarFallback>
             </Avatar>
             <div>
-              <h3 className="font-semibold text-lg">{name}</h3>
-              <p className="text-sm text-muted-foreground mt-1">Model: {modelName}</p>
+              <h3 className="font-semibold text-xl">{name}</h3>
+              <p className="text-base text-muted-foreground mt-1">Model: {modelName}</p>
               {stats?.updated_at && (
-                <p className="text-xs text-muted-foreground mt-0.5">
+                <p className="text-sm text-muted-foreground mt-0.5">
                   Updated: {new Date(stats.updated_at).toLocaleString("en-US", {
                     month: "short",
                     day: "numeric",
@@ -174,119 +184,152 @@ export function BotCard({
         </div>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {/* Trades Table Column */}
-          <div>
-            <h4 className="text-sm font-medium text-muted-foreground mb-3">Today&apos;s Trades</h4>
-            <BotTradesTable trades={todaysTrades} compact />
-          </div>
-
-          {/* Stats Cards Column */}
-          {stats ? (
-            <div className="space-y-3">
+        {/* Stats Cards Grid - 2x2 grid with compact square cards */}
+        {stats && (
+          <div className="mb-6">
+            <h4 className="text-base font-medium text-muted-foreground mb-3">Performance Metrics</h4>
+            <div className="grid grid-cols-2 gap-3">
               {/* Hourly PnL USD */}
-              <Card className="border">
-                <CardContent className="p-3">
-                  <div className="text-xs text-muted-foreground">Hourly PnL (USD)</div>
-                  <div className="text-2xl font-bold mt-1">
-                    ${stats.hourly_pnl_usd.value.toFixed(5)}
+              <Card className="border-0 shadow-sm bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className={`p-1.5 rounded ${stats.hourly_pnl_usd.value >= 0 ? 'bg-green-100 dark:bg-green-900/50' : 'bg-red-100 dark:bg-red-900/50'}`}>
+                      {stats.hourly_pnl_usd.value >= 0 ? (
+                        <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
+                      ) : (
+                        <TrendingDown className="h-4 w-4 text-red-600 dark:text-red-400" />
+                      )}
+                    </div>
+                    <div className="text-base font-medium">Hourly PnL</div>
                   </div>
-                  <div className="text-xs text-muted-foreground mt-1">
-                    {stats.hourly_pnl_usd.estimated ? "Estimated" : "Actual"} • {stats.hourly_pnl_usd.basis}
+                  <div className={`text-3xl font-bold ${stats.hourly_pnl_usd.value >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                    {stats.hourly_pnl_usd.value >= 0 ? '+' : ''}${Math.abs(stats.hourly_pnl_usd.value).toFixed(2)}
+                  </div>
+                  <div className="text-sm text-muted-foreground mt-1">
+                    {stats.hourly_pnl_usd.estimated ? "Est" : "Actual"}
                   </div>
                 </CardContent>
               </Card>
 
               {/* Daily PnL USD */}
-              <Card className="border">
-                <CardContent className="p-3">
-                  <div className="text-xs text-muted-foreground">Daily PnL (USD)</div>
-                  <div className="text-2xl font-bold mt-1">
-                    ${stats.daily_pnl_usd.value.toFixed(5)}
+              <Card className="border-0 shadow-sm bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className={`p-1.5 rounded ${stats.daily_pnl_usd.value >= 0 ? 'bg-green-100 dark:bg-green-900/50' : 'bg-red-100 dark:bg-red-900/50'}`}>
+                      <DollarSign className="h-4 w-4 text-green-600 dark:text-green-400" />
+                    </div>
+                    <div className="text-base font-medium">Daily PnL</div>
                   </div>
-                  <div className="text-xs text-muted-foreground mt-1">
-                    {stats.daily_pnl_usd.estimated ? "Estimated" : "Actual"} • {stats.daily_pnl_usd.basis}
+                  <div className={`text-3xl font-bold ${stats.daily_pnl_usd.value >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                    {stats.daily_pnl_usd.value >= 0 ? '+' : ''}${Math.abs(stats.daily_pnl_usd.value).toFixed(2)}
+                  </div>
+                  <div className="text-sm text-muted-foreground mt-1">
+                    {stats.daily_pnl_usd.estimated ? "Est" : "Actual"}
                   </div>
                 </CardContent>
               </Card>
 
               {/* Trades Hourly */}
-              <Card className="border">
-                <CardContent className="p-3">
-                  <div className="text-xs text-muted-foreground">Trades (Hourly)</div>
-                  <div className="text-2xl font-bold mt-1">
+              <Card className="border-0 shadow-sm bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="p-1.5 rounded bg-blue-100 dark:bg-blue-900/50">
+                      <Activity className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <div className="text-base font-medium">Hourly Trades</div>
+                  </div>
+                  <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">
                     {stats.trades_hourly.value}
                   </div>
-                  <div className="text-xs text-muted-foreground mt-1">
-                    {stats.trades_hourly.estimated ? "Estimated" : "Actual"} • {stats.trades_hourly.basis}
+                  <div className="text-sm text-muted-foreground mt-1">
+                    {stats.trades_hourly.estimated ? "Est" : "Actual"}
                   </div>
                 </CardContent>
               </Card>
 
               {/* Win Rate Daily */}
-              <Card className="border">
-                <CardContent className="p-3">
-                  <div className="text-xs text-muted-foreground">Win Rate (Daily)</div>
-                  <div className="text-2xl font-bold mt-1">
+              <Card className="border-0 shadow-sm bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="p-1.5 rounded bg-purple-100 dark:bg-purple-900/50">
+                      <Trophy className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                    </div>
+                    <div className="text-base font-medium">Win Rate</div>
+                  </div>
+                  <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">
                     {(stats.win_rate_daily.value * 100).toFixed(1)}%
                   </div>
-                  <div className="text-xs text-muted-foreground mt-1">
-                    {stats.win_rate_daily.estimated ? "Estimated" : "Actual"} • {stats.win_rate_daily.basis}
+                  <div className="text-sm text-muted-foreground mt-1">
+                    {stats.win_rate_daily.estimated ? "Est" : "Actual"}
                   </div>
                 </CardContent>
               </Card>
+            </div>
 
+            {/* Additional stats in a row below */}
+            <div className="grid grid-cols-2 gap-3 mt-3">
               {/* Samples */}
-              <Card className="border">
-                <CardContent className="p-3">
-                  <div className="text-xs text-muted-foreground mb-2">Samples</div>
-                  <div className="grid grid-cols-2 gap-2 text-xs">
+              <Card className="border-0 shadow-sm bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-950 dark:to-amber-900">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <BarChart3 className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                    <div className="text-base font-medium">Sample Data</div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 text-sm">
                     <div>
-                      <span className="text-muted-foreground">Ticks Lookback:</span>
-                      <span className="font-semibold ml-1">{stats.samples.ticks_lookback}</span>
+                      <span className="text-muted-foreground">Lookback:</span>
+                      <span className="font-semibold ml-1 text-base">{stats.samples.ticks_lookback}</span>
                     </div>
                     <div>
-                      <span className="text-muted-foreground">Trips Total:</span>
-                      <span className="font-semibold ml-1">{stats.samples.trips_total}</span>
+                      <span className="text-muted-foreground">Total:</span>
+                      <span className="font-semibold ml-1 text-base">{stats.samples.trips_total}</span>
                     </div>
                     <div>
-                      <span className="text-muted-foreground">Trips 1h:</span>
-                      <span className="font-semibold ml-1">{stats.samples.trips_1h}</span>
+                      <span className="text-muted-foreground">1h:</span>
+                      <span className="font-semibold ml-1 text-base">{stats.samples.trips_1h}</span>
                     </div>
                     <div>
-                      <span className="text-muted-foreground">Trips Today:</span>
-                      <span className="font-semibold ml-1">{stats.samples.trips_today}</span>
-                    </div>
-                    <div className="col-span-2">
-                      <span className="text-muted-foreground">Open Buys:</span>
-                      <span className="font-semibold ml-1">{stats.samples.open_buys}</span>
+                      <span className="text-muted-foreground">Today:</span>
+                      <span className="font-semibold ml-1 text-base">{stats.samples.trips_today}</span>
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
               {/* Assumptions */}
-              <Card className="border">
-                <CardContent className="p-3">
-                  <div className="text-xs text-muted-foreground mb-2">Assumptions</div>
-                  <div className="space-y-1 text-xs">
+              <Card className="border-0 shadow-sm bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Settings className="h-4 w-4 text-slate-600 dark:text-slate-400" />
+                    <div className="text-base font-medium">Config</div>
+                  </div>
+                  <div className="space-y-2 text-sm">
                     <div>
-                      <span className="text-muted-foreground">Trade Size (SOL):</span>
-                      <span className="font-semibold ml-1">{stats.assumptions.trade_size_SOL}</span>
+                      <span className="text-muted-foreground">Trade Size:</span>
+                      <span className="font-semibold ml-1 text-base">{stats.assumptions.trade_size_SOL} SOL</span>
                     </div>
                     <div>
-                      <span className="text-muted-foreground">Lookback Days:</span>
-                      <span className="font-semibold ml-1">{stats.assumptions.lookback_days_for_ticks}</span>
+                      <span className="text-muted-foreground">Lookback:</span>
+                      <span className="font-semibold ml-1 text-base">{stats.assumptions.lookback_days_for_ticks} days</span>
                     </div>
                   </div>
                 </CardContent>
               </Card>
             </div>
-          ) : (
-            <div className="flex items-center justify-center p-8">
-              <p className="text-sm text-muted-foreground">No stats available</p>
-            </div>
-          )}
+          </div>
+        )}
+
+        {/* No Stats Available Message */}
+        {!stats && (
+          <div className="flex items-center justify-center p-6 mb-4">
+            <p className="text-base text-muted-foreground">No stats available</p>
+          </div>
+        )}
+
+        {/* Today's Trades Table */}
+        <div>
+          <h4 className="text-base font-medium text-muted-foreground mb-3">Recent Transactions</h4>
+          <BotTradesTable trades={todaysTrades} compact />
         </div>
       </CardContent>
     </Card>
