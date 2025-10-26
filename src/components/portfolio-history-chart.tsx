@@ -114,6 +114,13 @@ export function PortfolioHistoryChart({ history }: PortfolioHistoryChartProps) {
     return filtered
   }, [chartData, timeRange])
 
+  // Find amplitude for Y axis domains and return it as constants based on data
+  const USD_MIN = filteredData.length > 0 ? Math.min(...filteredData.map((d) => d.usd)) : 0
+  const USD_MAX = filteredData.length > 0 ? Math.max(...filteredData.map((d) => d.usd)) : 0
+  const SOL_MIN = filteredData.length > 0 ? Math.min(...filteredData.map((d) => d.sol)) : 0
+  const SOL_MAX = filteredData.length > 0 ? Math.max(...filteredData.map((d) => d.sol)) : 0
+  
+
 
   return (
     <Card className="pt-0">
@@ -202,7 +209,7 @@ export function PortfolioHistoryChart({ history }: PortfolioHistoryChartProps) {
                 axisLine={false}
                 tick={false}
                 width={0}
-                domain={[100965, 100966]}
+                domain={[USD_MIN-1, USD_MAX+1]}
               />
               <YAxis
                 yAxisId="sol"
@@ -211,7 +218,7 @@ export function PortfolioHistoryChart({ history }: PortfolioHistoryChartProps) {
                 axisLine={false}
                 tick={false}
                 width={0}
-                domain={[4,5]}
+                domain={[SOL_MIN-1, SOL_MAX+1]}
               />
               <ChartTooltip
                 cursor={false}
