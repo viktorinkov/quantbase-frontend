@@ -2,6 +2,7 @@
 
 import { AppSidebar } from "@/components/app-sidebar"
 import { PortfolioBalances } from "@/components/portfolio-balances"
+import { PortfolioHistoryChart } from "@/components/portfolio-history-chart"
 import { SelectedBotInfo } from "@/components/selected-bot-info"
 import { SiteHeader } from "@/components/site-header"
 import {
@@ -38,7 +39,14 @@ export default function Page() {
                   Error loading portfolio: {error}
                 </div>
               ) : (
-                <PortfolioBalances balances={portfolio?.balances} />
+                <>
+                  <PortfolioBalances balances={portfolio?.balances} />
+                  {portfolio?.performance_history && portfolio.performance_history.length > 0 && (
+                    <div className="px-4 lg:px-6">
+                      <PortfolioHistoryChart history={portfolio.performance_history} />
+                    </div>
+                  )}
+                </>
               )}
             </div>
           </div>

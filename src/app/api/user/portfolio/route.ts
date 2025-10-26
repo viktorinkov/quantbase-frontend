@@ -136,29 +136,31 @@ export async function GET(request: NextRequest) {
     );
 
     // Calculate performance history (daily portfolio value over time)
-    // Group ticks by day and calculate cumulative portfolio value
-    const performanceHistoryMap = new Map<string, number>();
-    let cumulativeProfitLoss = 0;
-    const initialPortfolioValue = usdBalance; // Assume initial value was just USD balance
+    // Group ticks by day and store timestamp, USD value, and SOL value
+    const performanceHistoryMap = new Map<string, { timestamp: string; usd: number; sol: number }>();
 
     ticks.forEach((tick) => {
       const date = new Date(tick.timestamp).toISOString().split('T')[0];
-      cumulativeProfitLoss += (tick.profit_loss_usd || 0);
-
-      // Portfolio value = initial value + cumulative P/L
-      const portfolioValue = initialPortfolioValue + cumulativeProfitLoss;
+      const timestamp = tick.timestamp;
+      const walletBalanceUsd = (tick.wallet_balance_usd || 0);
+      const walletBalanceSol = (tick.wallet_balance_sol || 0);
 
       // Keep only the latest value for each day
-      performanceHistoryMap.set(date, portfolioValue);
+      performanceHistoryMap.set(date, {
+        timestamp,
+        usd: walletBalanceUsd,
+        sol: walletBalanceSol,
+      });
     });
 
     // Convert to array format for the chart
     const performanceHistory = Array.from(performanceHistoryMap.entries())
-      .map(([date, value]) => ({
-        date,
-        value
-      }))
-      .sort((a, b) => a.date.localeCompare(b.date));
+      .map(([_, data]) => [
+        data.timestamp,
+        data.usd,
+        data.sol,
+      ])
+      .sort((a, b) => new Date(a[0]).getTime() - new Date(b[0]).getTime());
 
     return NextResponse.json({
       success: true,
