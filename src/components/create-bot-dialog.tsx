@@ -44,6 +44,8 @@ interface NewBot {
 
 interface CreateBotDialogProps {
   onCreateBot: (bot: NewBot) => void
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
 }
 
 const defaultParameters: BotParameters = {
@@ -53,8 +55,12 @@ const defaultParameters: BotParameters = {
   base_trade_size: 0.002
 }
 
-export function CreateBotDialog({ onCreateBot }: CreateBotDialogProps) {
-  const [isOpen, setIsOpen] = useState(false)
+export function CreateBotDialog({ onCreateBot, open, onOpenChange }: CreateBotDialogProps) {
+  const [internalOpen, setInternalOpen] = useState(false)
+  
+  // Use controlled or uncontrolled mode
+  const isOpen = open !== undefined ? open : internalOpen
+  const setIsOpen = open !== undefined ? onOpenChange || (() => {}) : setInternalOpen
   const [botName, setBotName] = useState("")
   const [botDescription, setBotDescription] = useState("")
   const [parameters, setParameters] = useState<BotParameters>(defaultParameters)
@@ -256,12 +262,14 @@ export function CreateBotDialog({ onCreateBot }: CreateBotDialogProps) {
         }
       }}
     >
-      <DialogTrigger asChild>
-        <Button className="gap-2">
-          <Plus className="h-4 w-4" />
-          Create New Bot
-        </Button>
-      </DialogTrigger>
+      {open === undefined && (
+        <DialogTrigger asChild>
+          <Button className="gap-2">
+            <Plus className="h-4 w-4" />
+            Create New Bot
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">

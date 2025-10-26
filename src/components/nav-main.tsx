@@ -11,6 +11,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { useCreateBot } from "@/contexts/create-bot-context"
 
 export function NavMain({
   items,
@@ -22,6 +23,7 @@ export function NavMain({
   }[]
 }) {
   const pathname = usePathname()
+  const { openDialog } = useCreateBot()
 
   return (
     <SidebarGroup>
@@ -30,6 +32,7 @@ export function NavMain({
           <SidebarMenuItem className="flex items-center gap-2">
             <SidebarMenuButton
               tooltip="Create Bot"
+              onClick={openDialog}
               className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground min-w-8 duration-200 ease-linear"
             >
               <IconCirclePlusFilled />
