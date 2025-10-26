@@ -2,23 +2,17 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react"
 
-interface Trade {
-  pair: string
-  profit: number
+interface BotTrade {
+  action: string
+  price: number
   timestamp: string
-}
-
-interface DailyPerformance {
-  date: string
-  performance: number
 }
 
 export interface Bot {
   id: string
   name: string
   modelName: string
-  dailyPerformance: DailyPerformance[]
-  todaysTradesToday: Trade[]
+  todaysTrades: BotTrade[]
 }
 
 interface SelectedBotContextType {

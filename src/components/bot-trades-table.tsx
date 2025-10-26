@@ -103,9 +103,15 @@ const columns: ColumnDef<BotTrade>[] = [
 ]
 
 export function BotTradesTable({ trades }: BotTradesTableProps) {
+<<<<<<< HEAD
   // Filter out HOLD and WARMUP actions
   const filteredTrades = React.useMemo(
     () => trades.filter((trade) => trade.action !== "HOLD" && trade.action !== "WARMUP"),
+=======
+  // Only show trades with exactly "BUY" or "SELL" actions (filter out corrupted data)
+  const filteredTrades = React.useMemo(
+    () => trades.filter((trade) => trade.action === "BUY" || trade.action === "SELL"),
+>>>>>>> 6e72e7e0abc28109346af0099e101d9830a8f1ad
     [trades]
   )
 
