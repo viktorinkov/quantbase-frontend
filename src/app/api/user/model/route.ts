@@ -1,13 +1,8 @@
 import { MongoClient } from 'mongodb';
 import { NextRequest, NextResponse } from 'next/server';
 
-const uri = process.env.MONGODB_URI;
-
-if (!uri) {
-  throw new Error('MONGODB_URI is not defined in environment variables');
-}
-
-const client = new MongoClient(uri);
+const uri = process.env.MONGODB_URI || '';
+const client = uri ? new MongoClient(uri) : null;
 const dbName = 'user_management';
 
 // Helper function to get the current model from active_models
@@ -41,6 +36,13 @@ function getCurrentModel(activeModels: Record<string, string>): string | null {
 
 export async function POST(request: NextRequest) {
   try {
+    if (!client) {
+      return NextResponse.json(
+        { error: 'Database connection not configured' },
+        { status: 500 }
+      );
+    }
+
     const body = await request.json();
     const { username, modelName } = body;
 
@@ -118,6 +120,13 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
+    if (!client) {
+      return NextResponse.json(
+        { error: 'Database connection not configured' },
+        { status: 500 }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const username = searchParams.get('username');
 
