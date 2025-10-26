@@ -54,6 +54,11 @@ const data = {
       icon: IconBuildingStore,
     },
     {
+      title: "Forecasting Models",
+      url: "/forecasting",
+      icon: IconChartBar,
+    },
+    {
       title: "Portfolio",
       url: "/portfolio",
       icon: IconFolder,
