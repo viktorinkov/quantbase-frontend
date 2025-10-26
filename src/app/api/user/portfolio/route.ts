@@ -65,8 +65,8 @@ export async function GET(request: NextRequest) {
     const customBotsCollection = customBotsDb.collection('bots');
 
     // Fetch from both collections in parallel, handle if custom_bots_db doesn't exist
-    let standardBots = [];
-    let customBots = [];
+    let standardBots: any[] = [];
+    let customBots: any[] = [];
 
     try {
       [standardBots, customBots] = await Promise.all([
