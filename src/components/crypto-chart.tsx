@@ -3,6 +3,8 @@
 import * as React from "react"
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
 
+import { useIsMobile } from "@/hooks/use-mobile"
+import { getCryptoColor } from "@/lib/crypto-colors"
 import {
   Card,
   CardAction,
@@ -40,7 +42,7 @@ interface CryptoChartProps {
 const chartConfig = {
   price: {
     label: "Price",
-    color: "var(--primary)",
+    color: "hsl(var(--primary))",
   },
 } satisfies ChartConfig
 
@@ -51,7 +53,17 @@ export function CryptoChart({
   priceChange24h,
   chartData,
 }: CryptoChartProps) {
+  const isMobile = useIsMobile()
   const [timeRange, setTimeRange] = React.useState("1d")
+  
+  // Get crypto-specific color
+  const cryptoColor = getCryptoColor(symbol)
+
+  React.useEffect(() => {
+    if (isMobile) {
+      setTimeRange("1d")
+    }
+  }, [isMobile])
 
   const filteredData = chartData.filter((item) => {
     const date = new Date(item.date)
@@ -135,12 +147,12 @@ export function CryptoChart({
               <linearGradient id={`fill-${symbol}`} x1="0" y1="0" x2="0" y2="1">
                 <stop
                   offset="5%"
-                  stopColor="var(--color-price)"
-                  stopOpacity={1.0}
+                  stopColor={cryptoColor}
+                  stopOpacity={0.8}
                 />
                 <stop
                   offset="95%"
-                  stopColor="var(--color-price)"
+                  stopColor={cryptoColor}
                   stopOpacity={0.1}
                 />
               </linearGradient>
@@ -217,7 +229,8 @@ export function CryptoChart({
               dataKey="price"
               type="natural"
               fill={`url(#fill-${symbol})`}
-              stroke="var(--color-price)"
+              stroke={cryptoColor}
+              strokeWidth={2}
             />
           </AreaChart>
         </ChartContainer>
