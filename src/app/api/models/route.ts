@@ -6,8 +6,6 @@ interface Tick {
   timestamp: string;
   price_usd: number;
   action: string;
-  wallet_balance_sol?: number;
-  profit_loss_usd?: number;
 }
 
 export async function GET() {
@@ -54,24 +52,26 @@ export async function GET() {
         const sevenDaysAgo = new Date();
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
+        // Filter out invalid ticks - only include ticks with valid action, price, and timestamp
+        const validTicks = todayTicks.filter((tick) =>
+          tick.action &&
+          typeof tick.price_usd === 'number' &&
+          !isNaN(tick.price_usd) &&
+          tick.timestamp
+        );
+
         // Format today's ticks for display
-        const todaysTradesFormatted = todayTicks.map((tick) => ({
+        const todaysTradesFormatted = validTicks.map((tick) => ({
           action: tick.action,
           price: tick.price_usd,
-          timestamp: tick.timestamp,
-          walletBalance: tick.wallet_balance_sol || 0,
-          profitLoss: tick.profit_loss_usd || 0
+          timestamp: tick.timestamp
         }));
-
-        // Calculate today's total P/L
-        const todaysPL = todayTicks.reduce((sum, tick) => sum + (tick.profit_loss_usd || 0), 0);
 
         return {
           id: bot._id.toString(),
           name: displayName,
           modelName: modelName,
-          todaysTrades: todaysTradesFormatted,
-          todaysPL: todaysPL
+          todaysTrades: todaysTradesFormatted
         };
       })
     );

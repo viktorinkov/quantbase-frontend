@@ -11,8 +11,6 @@ interface BotTrade {
   action: string
   price: number
   timestamp: string
-  walletBalance: number
-  profitLoss: number
 }
 
 interface BotCardProps {
@@ -20,7 +18,6 @@ interface BotCardProps {
   name: string
   modelName: string
   todaysTrades: BotTrade[]
-  todaysPL: number
 }
 
 export function BotCard({
@@ -28,7 +25,6 @@ export function BotCard({
   name,
   modelName,
   todaysTrades,
-  todaysPL,
 }: BotCardProps) {
   const { selectedBot, selectBot, deselectBot } = useSelectedBot()
   const isSelected = selectedBot?.id === id
@@ -42,7 +38,6 @@ export function BotCard({
         name,
         modelName,
         todaysTrades,
-        todaysPL,
       })
     }
   }
@@ -51,17 +46,9 @@ export function BotCard({
     <Card className="overflow-hidden">
       <CardHeader className="pb-4">
         <div className="flex items-start justify-between">
-          <div className="flex items-baseline gap-4">
-            <div>
-              <h3 className="font-semibold text-lg">{name}</h3>
-              <p className="text-sm text-muted-foreground mt-1">Model: {modelName}</p>
-            </div>
-            <div className="flex items-baseline gap-2">
-              <span className="text-sm text-muted-foreground">Today&apos;s P/L:</span>
-              <span className={`font-semibold text-lg ${todaysPL >= 0 ? "text-green-600" : "text-red-600"}`}>
-                {todaysPL >= 0 ? "+" : ""}${todaysPL.toFixed(2)}
-              </span>
-            </div>
+          <div>
+            <h3 className="font-semibold text-lg">{name}</h3>
+            <p className="text-sm text-muted-foreground mt-1">Model: {modelName}</p>
           </div>
           <Button
             onClick={handleToggleSelect}

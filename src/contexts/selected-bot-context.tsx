@@ -6,8 +6,6 @@ interface BotTrade {
   action: string
   price: number
   timestamp: string
-  walletBalance: number
-  profitLoss: number
 }
 
 export interface Bot {
@@ -15,7 +13,6 @@ export interface Bot {
   name: string
   modelName: string
   todaysTrades: BotTrade[]
-  todaysPL: number
 }
 
 interface SelectedBotContextType {

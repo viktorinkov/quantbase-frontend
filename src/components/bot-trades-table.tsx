@@ -44,8 +44,6 @@ interface BotTrade {
   action: string
   price: number
   timestamp: string
-  walletBalance: number
-  profitLoss: number
 }
 
 interface BotTradesTableProps {
@@ -99,24 +97,6 @@ const columns: ColumnDef<BotTrade>[] = [
           minimumFractionDigits: 2,
           maximumFractionDigits: 2
         })}
-      </div>
-    ),
-  },
-  {
-    accessorKey: "walletBalance",
-    header: () => <div className="text-right">Wallet Balance (SOL)</div>,
-    cell: ({ row }) => (
-      <div className="text-right font-mono">
-        {row.original.walletBalance.toFixed(4)}
-      </div>
-    ),
-  },
-  {
-    accessorKey: "profitLoss",
-    header: () => <div className="text-right">P/L (USD)</div>,
-    cell: ({ row }) => (
-      <div className={`text-right font-mono font-semibold ${row.original.profitLoss >= 0 ? "text-green-600" : "text-red-600"}`}>
-        {row.original.profitLoss >= 0 ? "+" : ""}${row.original.profitLoss.toFixed(2)}
       </div>
     ),
   },
