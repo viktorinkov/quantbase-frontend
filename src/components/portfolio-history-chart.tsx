@@ -202,6 +202,7 @@ export function PortfolioHistoryChart({ history }: PortfolioHistoryChartProps) {
                 axisLine={false}
                 tick={false}
                 width={0}
+                domain={[100965, 100966]}
               />
               <YAxis
                 yAxisId="sol"
@@ -210,7 +211,7 @@ export function PortfolioHistoryChart({ history }: PortfolioHistoryChartProps) {
                 axisLine={false}
                 tick={false}
                 width={0}
-                // tickFormatter={(value) => `${value.toFixed(3)} SOL`}
+                domain={[4,5]}
               />
               <ChartTooltip
                 cursor={false}
