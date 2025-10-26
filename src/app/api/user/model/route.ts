@@ -17,7 +17,18 @@ function getCurrentModel(activeModels: Record<string, string>): string | null {
   }
 
   // Get all timestamps and sort them in descending order (most recent first)
+  // Handles both Unix timestamps (numeric strings) and ISO strings for backward compatibility
   const timestamps = Object.keys(activeModels).sort((a, b) => {
+    // Try parsing as number first (Unix timestamp)
+    const numA = parseInt(a, 10);
+    const numB = parseInt(b, 10);
+
+    if (!isNaN(numA) && !isNaN(numB)) {
+      // Both are numeric timestamps
+      return numB - numA;
+    }
+
+    // Fallback to date parsing for ISO strings
     return new Date(b).getTime() - new Date(a).getTime();
   });
 
@@ -54,21 +65,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create timestamp for the model change (Date format)
-    const timestamp = new Date().toISOString();
+    // Create timestamp for the model change (Unix timestamp as string)
+    // Using Unix timestamp (milliseconds since epoch) to avoid MongoDB field name restrictions
+    // ISO timestamps contain dots and colons which MongoDB interprets as nested paths
+    const timestamp = Date.now().toString();
 
     // Add to active_models map with timestamp as key and model name as value
-    // Format: { "2025-01-15T10:30:00.000Z": "momentum" }
+    // Format: { "1737849600000": "momentum" }
     // Use "no_model" when deselecting instead of null
     const activeModelsKey = `active_models.${timestamp}`;
     const updateData: Record<string, string> = {
       [activeModelsKey]: modelName || "no_model",
     };
 
-    // Update user in database
+    // Update user in database - use $set with dot notation to merge the new timestamp
     const result = await usersCollection.updateOne(
       { username },
-      { $set: updateData }
+      {
+        $set: {
+          [`active_models.${timestamp}`]: modelValue
+        }
+      }
     );
 
     if (result.modifiedCount === 0) {

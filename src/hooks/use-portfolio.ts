@@ -30,6 +30,8 @@ export interface PerformanceHistoryPoint {
   value: number
 }
 
+export type PortfolioHistoryTuple = [string, number, number] // [timestamp, usd_value, sol_value]
+
 export interface Portfolio {
   username: string
   current_model: string | null
@@ -41,7 +43,7 @@ export interface Portfolio {
   performance: PortfolioPerformance
   trades: PortfolioTrade[]
   total_trades: number
-  performance_history: PerformanceHistoryPoint[]
+  performance_history: PortfolioHistoryTuple[]
 }
 
 interface UsePortfolioResult {

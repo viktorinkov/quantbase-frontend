@@ -46,7 +46,7 @@ const data = {
       icon: IconGraph,
     },
     {
-      title: "Bot Marketplace",
+      title: "Model Marketplace",
       url: "/bot-marketplace",
       icon: IconBuildingStore,
     },
