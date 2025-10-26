@@ -8,7 +8,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar"
 const pageTitles: Record<string, string> = {
   "/dashboard": "Dashboard",
   "/crypto": "Crypto",
-  "/bot-marketplace": "Bot Marketplace",
+  "/model-marketplace": "Model Marketplace",
   "/portfolio": "Portfolio",
 }
 
