@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { X } from "lucide-react"
 import { useSelectedBot } from "@/contexts/selected-bot-context"
+import { BotParameterCustomizer } from "@/components/bot-parameter-customizer"
 
 export function SelectedBotInfo() {
   const { selectedBot, deselectBot, isLoading } = useSelectedBot()

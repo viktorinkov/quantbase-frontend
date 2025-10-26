@@ -1,0 +1,157 @@
+[
+  {
+    "id": "bot-1",
+    "name": "Momentum Master",
+    "image": "https://api.dicebear.com/7.x/shapes/svg?seed=bot1",
+    "creator": {
+      "username": "alice_crypto",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=alice"
+    },
+    "monthlyPerformance": 18.5,
+    "totalVolume": 2450000,
+    "userCount": 1247,
+    "dailyPerformance": [
+      { "date": "2025-10-18", "performance": 2.3 },
+      { "date": "2025-10-19", "performance": -0.8 },
+      { "date": "2025-10-20", "performance": 1.5 },
+      { "date": "2025-10-21", "performance": 3.2 },
+      { "date": "2025-10-22", "performance": 1.1 },
+      { "date": "2025-10-23", "performance": -0.5 },
+      { "date": "2025-10-24", "performance": 2.8 },
+      { "date": "2025-10-25", "performance": 1.9 }
+    ],
+    "topWinsToday": [
+      { "pair": "SOL/USDT", "profit": 4.2, "timestamp": "2025-10-25T09:15:00Z" },
+      { "pair": "SOL/USDT", "profit": 2.8, "timestamp": "2025-10-25T11:30:00Z" },
+      { "pair": "SOL/USDT", "profit": 1.5, "timestamp": "2025-10-25T14:45:00Z" }
+    ]
+  },
+  {
+    "id": "bot-2",
+    "name": "Grid Trader Pro",
+    "image": "https://api.dicebear.com/7.x/shapes/svg?seed=bot2",
+    "creator": {
+      "username": "bob_trader",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=bob"
+    },
+    "monthlyPerformance": 12.3,
+    "totalVolume": 1850000,
+    "userCount": 892,
+    "dailyPerformance": [
+      { "date": "2025-10-18", "performance": 1.1 },
+      { "date": "2025-10-19", "performance": 0.9 },
+      { "date": "2025-10-20", "performance": -0.3 },
+      { "date": "2025-10-21", "performance": 1.7 },
+      { "date": "2025-10-22", "performance": 0.8 },
+      { "date": "2025-10-23", "performance": 1.2 },
+      { "date": "2025-10-24", "performance": 0.6 },
+      { "date": "2025-10-25", "performance": 1.4 }
+    ],
+    "topWinsToday": [
+      { "pair": "SOL/USDT", "profit": 2.1, "timestamp": "2025-10-25T08:20:00Z" },
+      { "pair": "SOL/USDT", "profit": 1.8, "timestamp": "2025-10-25T13:15:00Z" }
+    ]
+  },
+  {
+    "id": "bot-3",
+    "name": "DCA Accumulator",
+    "image": "https://api.dicebear.com/7.x/shapes/svg?seed=bot3",
+    "creator": {
+      "username": "charlie_invest",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=charlie"
+    },
+    "monthlyPerformance": 8.7,
+    "totalVolume": 3200000,
+    "userCount": 2145,
+    "dailyPerformance": [
+      { "date": "2025-10-18", "performance": 0.7 },
+      { "date": "2025-10-19", "performance": 0.9 },
+      { "date": "2025-10-20", "performance": 0.5 },
+      { "date": "2025-10-21", "performance": 1.1 },
+      { "date": "2025-10-22", "performance": 0.8 },
+      { "date": "2025-10-23", "performance": 0.6 },
+      { "date": "2025-10-24", "performance": 0.9 },
+      { "date": "2025-10-25", "performance": 0.0 }
+    ],
+    "topWinsToday": []
+  },
+  {
+    "id": "bot-4",
+    "name": "Arbitrage Hunter",
+    "image": "https://api.dicebear.com/7.x/shapes/svg?seed=bot4",
+    "creator": {
+      "username": "diana_arb",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=diana"
+    },
+    "monthlyPerformance": 22.1,
+    "totalVolume": 5600000,
+    "userCount": 534,
+    "dailyPerformance": [
+      { "date": "2025-10-18", "performance": 3.1 },
+      { "date": "2025-10-19", "performance": 2.4 },
+      { "date": "2025-10-20", "performance": -1.2 },
+      { "date": "2025-10-21", "performance": 4.5 },
+      { "date": "2025-10-22", "performance": 1.9 },
+      { "date": "2025-10-23", "performance": 2.7 },
+      { "date": "2025-10-24", "performance": 3.3 },
+      { "date": "2025-10-25", "performance": 2.6 }
+    ],
+    "topWinsToday": [
+      { "pair": "SOL/USDT", "profit": 3.5, "timestamp": "2025-10-25T10:05:00Z" },
+      { "pair": "SOL/USDT", "profit": 2.9, "timestamp": "2025-10-25T12:40:00Z" },
+      { "pair": "SOL/USDT", "profit": 2.2, "timestamp": "2025-10-25T15:20:00Z" }
+    ]
+  },
+  {
+    "id": "bot-5",
+    "name": "Mean Reversion AI",
+    "image": "https://api.dicebear.com/7.x/shapes/svg?seed=bot5",
+    "creator": {
+      "username": "evan_quant",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=evan"
+    },
+    "monthlyPerformance": 15.9,
+    "totalVolume": 4100000,
+    "userCount": 1678,
+    "dailyPerformance": [
+      { "date": "2025-10-18", "performance": 1.8 },
+      { "date": "2025-10-19", "performance": 1.2 },
+      { "date": "2025-10-20", "performance": 2.1 },
+      { "date": "2025-10-21", "performance": -0.9 },
+      { "date": "2025-10-22", "performance": 1.5 },
+      { "date": "2025-10-23", "performance": 1.9 },
+      { "date": "2025-10-24", "performance": 0.7 },
+      { "date": "2025-10-25", "performance": 2.3 }
+    ],
+    "topWinsToday": [
+      { "pair": "SOL/USDT", "profit": 3.1, "timestamp": "2025-10-25T09:50:00Z" }
+    ]
+  },
+  {
+    "id": "bot-6",
+    "name": "Scalper Elite",
+    "image": "https://api.dicebear.com/7.x/shapes/svg?seed=bot6",
+    "creator": {
+      "username": "fiona_scalp",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=fiona"
+    },
+    "monthlyPerformance": 26.4,
+    "totalVolume": 7800000,
+    "userCount": 423,
+    "dailyPerformance": [
+      { "date": "2025-10-18", "performance": 3.8 },
+      { "date": "2025-10-19", "performance": 2.9 },
+      { "date": "2025-10-20", "performance": 4.1 },
+      { "date": "2025-10-21", "performance": -1.5 },
+      { "date": "2025-10-22", "performance": 3.2 },
+      { "date": "2025-10-23", "performance": 2.5 },
+      { "date": "2025-10-24", "performance": 4.7 },
+      { "date": "2025-10-25", "performance": 3.6 }
+    ],
+    "topWinsToday": [
+      { "pair": "SOL/USDT", "profit": 5.2, "timestamp": "2025-10-25T08:45:00Z" },
+      { "pair": "SOL/USDT", "profit": 4.1, "timestamp": "2025-10-25T11:10:00Z" },
+      { "pair": "SOL/USDT", "profit": 3.7, "timestamp": "2025-10-25T14:25:00Z" }
+    ]
+  }
+]
