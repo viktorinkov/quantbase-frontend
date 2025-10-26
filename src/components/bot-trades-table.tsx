@@ -47,8 +47,7 @@ interface BotTrade {
 }
 
 interface BotTradesTableProps {
-  trades: BotTrade[]
-  compact?: boolean
+  trades?: BotTrade[]
 }
 
 const columns: ColumnDef<BotTrade>[] = [
@@ -106,7 +105,7 @@ const columns: ColumnDef<BotTrade>[] = [
 export function BotTradesTable({ trades, compact = false }: BotTradesTableProps) {
   // Only show trades with exactly "BUY" or "SELL" actions (filter out corrupted data)
   const filteredTrades = React.useMemo(
-    () => trades.filter((trade) => trade.action === "BUY" || trade.action === "SELL"),
+    () => (trades || []).filter((trade) => trade.action === "BUY" || trade.action === "SELL"),
     [trades]
   )
 

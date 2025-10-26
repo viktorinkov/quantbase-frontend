@@ -73,9 +73,10 @@ export async function POST(request: NextRequest) {
     // Add to active_models map with timestamp as key and model name as value
     // Format: { "1737849600000": "momentum" }
     // Use "no_model" when deselecting instead of null
-    const modelValue = modelName || "no_model";
-
-    console.log('Setting active_models with:', { timestamp, modelValue, type: typeof modelValue });
+    const activeModelsKey = `active_models.${timestamp}`;
+    const updateData: Record<string, string> = {
+      [activeModelsKey]: modelName || "no_model",
+    };
 
     // Update user in database - use $set with dot notation to merge the new timestamp
     const result = await usersCollection.updateOne(
@@ -106,11 +107,17 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error updating user model:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: error instanceof Error ? error.message : 'Internal server error' },
       { status: 500 }
     );
   } finally {
-    await client.close();
+    if (client) {
+      try {
+        await client.close();
+      } catch (closeError) {
+        console.error('Error closing MongoDB client:', closeError);
+      }
+    }
   }
 }
 
@@ -152,10 +159,16 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Error fetching user:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: error instanceof Error ? error.message : 'Internal server error' },
       { status: 500 }
     );
   } finally {
-    await client.close();
+    if (client) {
+      try {
+        await client.close();
+      } catch (closeError) {
+        console.error('Error closing MongoDB client:', closeError);
+      }
+    }
   }
 }

@@ -6,6 +6,8 @@ const BACKEND_API_URL = process.env.BACKEND_API_URL || 'http://localhost:8000';
 async function makeBackendRequest(endpoint: string, options: RequestInit = {}) {
   const url = `${BACKEND_API_URL}${endpoint}`;
   
+  console.log('Frontend API: Making request to', url);
+  
   const response = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
@@ -14,9 +16,18 @@ async function makeBackendRequest(endpoint: string, options: RequestInit = {}) {
     ...options,
   });
 
+  console.log('Frontend API: Response status', response.status);
+
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ error: 'Unknown error' }));
-    throw new Error(error.detail || error.error || 'Backend request failed');
+    const responseText = await response.text();
+    console.log('Frontend API: Error response body', responseText);
+    let error;
+    try {
+      error = JSON.parse(responseText);
+    } catch {
+      error = { error: responseText || 'Unknown error' };
+    }
+    throw new Error(error.detail || error.error || `Backend request failed with status ${response.status}`);
   }
 
   return response.json();
@@ -28,18 +39,23 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { botId, ...personalizationData } = body;
     
+    // If no botId provided, use standalone endpoint (pre-creation parameter generation)
+    let backendEndpoint: string;
     if (!botId) {
-      return NextResponse.json(
-        { error: 'Bot ID is required' },
-        { status: 400 }
-      );
+      backendEndpoint = '/api/bots/personalize-standalone';
+    } else {
+      backendEndpoint = `/api/bots/${botId}/personalize`;
     }
     
-    const response = await makeBackendRequest(`/api/bots/${botId}/personalize`, {
+    console.log('Frontend API: Routing to', backendEndpoint);
+    console.log('Frontend API: Sending data', JSON.stringify(personalizationData, null, 2));
+    
+    const response = await makeBackendRequest(backendEndpoint, {
       method: 'POST',
       body: JSON.stringify(personalizationData),
     });
 
+    console.log('Frontend API: Response received successfully');
     return NextResponse.json(response);
   } catch (error) {
     console.error('Error personalizing bot:', error);

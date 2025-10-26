@@ -21,14 +21,10 @@ interface NewBot {
     avatar: string
   }
   parameters: {
-    kSig: number
     window: number
-    stopLoss: number
-    takeProfit: number
-    positionSize: number
-    riskLevel: 'conservative' | 'moderate' | 'aggressive'
-    tradingHours: '24/7' | 'market-hours' | 'custom'
-    customHours?: string
+    k_sigma: number
+    risk_factor: number
+    base_trade_size: number
   }
 }
 

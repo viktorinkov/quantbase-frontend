@@ -136,8 +136,15 @@ export function SelectedBotProvider({ children }: { children: React.ReactNode })
       })
 
       if (!response.ok) {
-        const error = await response.json()
-        console.error('Failed to update model in database:', error)
+        let errorMessage = 'Failed to update model in database'
+        try {
+          const error = await response.json()
+          errorMessage = error.error || error.message || errorMessage
+          console.error('Failed to update model in database:', error)
+        } catch {
+          const errorText = await response.text()
+          console.error('Failed to update model in database:', errorText || `Status: ${response.status}`)
+        }
       } else {
         const data = await response.json()
         console.log('Model updated successfully:', data)
@@ -168,8 +175,13 @@ export function SelectedBotProvider({ children }: { children: React.ReactNode })
       })
 
       if (!response.ok) {
-        const error = await response.json()
-        console.error('Failed to deselect model in database:', error)
+        try {
+          const error = await response.json()
+          console.error('Failed to deselect model in database:', error)
+        } catch {
+          const errorText = await response.text()
+          console.error('Failed to deselect model in database:', errorText || `Status: ${response.status}`)
+        }
       } else {
         const data = await response.json()
         console.log('Model deselected successfully:', data)
