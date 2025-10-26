@@ -45,6 +45,7 @@ export default function Page() {
             id: bot.id,
             name: bot.name,
             modelName: bot.name, // Use name as modelName for now
+            image: bot.image, // Use bot's stored image
             todaysTrades: bot.todaysTrades || [],
             stats: bot.stats
           }))
@@ -75,6 +76,7 @@ export default function Page() {
       const botWithDefaults: Bot = {
         ...newBot,
         modelName: newBot.name,
+        image: newBot.image, // Use bot's stored image
         todaysTrades: []
       }
       
@@ -89,6 +91,7 @@ export default function Page() {
           id: bot.id,
           name: bot.name,
           modelName: bot.name,
+          image: bot.image, // Use bot's stored image
           todaysTrades: bot.todaysTrades || [],
           stats: bot.stats
         }))
@@ -147,6 +150,7 @@ export default function Page() {
                     id={bot.id}
                     name={bot.name}
                     modelName={bot.modelName}
+                    image={bot.image}
                     todaysTrades={bot.todaysTrades}
                     stats={bot.stats}
                     index={index}

@@ -47,6 +47,7 @@ export interface Bot {
   id: string
   name: string
   modelName: string
+  image?: string
   todaysTrades: BotTrade[]
   stats?: BotStats
 }
