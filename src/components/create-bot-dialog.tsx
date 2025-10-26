@@ -1,27 +1,51 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Separator } from "@/components/ui/separator"
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogFooter, 
-  DialogHeader, 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
   DialogTitle,
-  DialogTrigger 
+  DialogTrigger
 } from "@/components/ui/dialog"
-import { 
-  Wand2, 
+import {
+  Wand2,
   CheckCircle,
   Plus,
   Bot
 } from "lucide-react"
+import { RollingText } from "@/components/ui/shadcn-io/rolling-text"
+
+// Looping Rolling Text Component
+function LoopingRollingText({ text, className }: { text: string; className?: string }) {
+  const [key, setKey] = useState(0)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setKey(prev => prev + 1)
+    }, 2500) // Loop every 2.5 seconds (allows animation to complete)
+
+    return () => clearInterval(interval)
+  }, [])
+
+  return (
+    <div className={className}>
+      <RollingText
+        key={key}
+        text={text}
+        transition={{ duration: 0.4, delay: 0.05 }}
+      />
+    </div>
+  )
+}
 
 interface BotParameters {
   window: number
@@ -68,29 +92,34 @@ export function CreateBotDialog({ onCreateBot, open, onOpenChange }: CreateBotDi
   const [isProcessing, setIsProcessing] = useState(false)
   const [lastProcessedInput, setLastProcessedInput] = useState("")
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [showOptimizingLoader, setShowOptimizingLoader] = useState(false)
 
   const handleNaturalLanguageSubmit = async () => {
     if (!naturalLanguageInput.trim()) return
-    
+
     setIsProcessing(true)
+    setShowOptimizingLoader(true)
     setLastProcessedInput(naturalLanguageInput)
-    
+
     try {
-      // Call backend API for Claude AI processing (pre-creation, no botId needed)
-      const response = await fetch('/api/bots/personalize', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          // No botId - triggers standalone endpoint for parameter generation
-          user_preferences: {
-            user_request: naturalLanguageInput,
-            preferences_description: naturalLanguageInput
+      // Minimum 2 second delay to show the loader animation
+      const [response] = await Promise.all([
+        fetch('/api/bots/personalize', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
           },
-          natural_language_input: naturalLanguageInput
-        })
-      })
+          body: JSON.stringify({
+            // No botId - triggers standalone endpoint for parameter generation
+            user_preferences: {
+              user_request: naturalLanguageInput,
+              preferences_description: naturalLanguageInput
+            },
+            natural_language_input: naturalLanguageInput
+          })
+        }),
+        new Promise(resolve => setTimeout(resolve, 2000))
+      ])
 
       if (!response.ok) {
         const errorText = await response.text()
@@ -106,7 +135,7 @@ export function CreateBotDialog({ onCreateBot, open, onOpenChange }: CreateBotDi
       }
 
       const result = await response.json()
-      
+
       // Apply personalized parameters from backend
       if (result.personalized_parameters) {
         setParameters(result.personalized_parameters)
@@ -116,7 +145,7 @@ export function CreateBotDialog({ onCreateBot, open, onOpenChange }: CreateBotDi
         const processedParams = processNaturalLanguageInput(naturalLanguageInput, parameters)
         setParameters(processedParams)
       }
-      
+
     } catch (error) {
       console.error('Error processing natural language:', error)
       // Fallback to local processing if backend fails
@@ -124,6 +153,7 @@ export function CreateBotDialog({ onCreateBot, open, onOpenChange }: CreateBotDi
       setParameters(processedParams)
     } finally {
       setIsProcessing(false)
+      setShowOptimizingLoader(false)
     }
   }
 
@@ -199,10 +229,10 @@ export function CreateBotDialog({ onCreateBot, open, onOpenChange }: CreateBotDi
       }
 
       const newBot = await response.json()
-      
+
       // Call the onCreateBot callback with the created bot
       onCreateBot(newBot)
-      
+
       // Reset form
       setBotName("")
       setBotDescription("")
@@ -211,16 +241,16 @@ export function CreateBotDialog({ onCreateBot, open, onOpenChange }: CreateBotDi
       setLastProcessedInput("")
       setErrorMessage(null)
       setIsOpen(false)
-      
+
     } catch (error) {
       console.error('Error creating bot:', error)
-      
+
       // Only show error message if not already set
       if (!errorMessage) {
         const errorMsg = error instanceof Error ? error.message : 'Failed to create bot'
         setErrorMessage(errorMsg)
       }
-      
+
       // Note: We're not doing fallback creation anymore - user sees the error
       // If you want to keep the fallback, remove the lines above and uncomment below:
       /*
@@ -238,7 +268,7 @@ export function CreateBotDialog({ onCreateBot, open, onOpenChange }: CreateBotDi
       }
 
       onCreateBot(newBot)
-      
+
       // Reset form
       setBotName("")
       setBotDescription("")
@@ -271,6 +301,16 @@ export function CreateBotDialog({ onCreateBot, open, onOpenChange }: CreateBotDi
         </DialogTrigger>
       )}
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        {/* Loader Overlay */}
+        {showOptimizingLoader && (
+          <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/95 backdrop-blur-sm rounded-lg">
+            <LoopingRollingText
+              text="Optimizing Algorithm"
+              className="text-2xl font-bold text-foreground"
+            />
+          </div>
+        )}
+
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Bot className="h-5 w-5" />
@@ -389,10 +429,10 @@ export function CreateBotDialog({ onCreateBot, open, onOpenChange }: CreateBotDi
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => setIsOpen(false)}>
+          <Button variant="outline" onClick={() => setIsOpen(false)} disabled={showOptimizingLoader}>
             Cancel
           </Button>
-          <Button onClick={handleCreateBot} disabled={!botName.trim()}>
+          <Button onClick={handleCreateBot} disabled={!botName.trim() || showOptimizingLoader}>
             Create Bot
           </Button>
         </DialogFooter>
