@@ -1,8 +1,8 @@
 "use client"
 
 import { AppSidebar } from "@/components/app-sidebar"
-import { CryptoTradesTable } from "@/components/crypto-trades-table"
-import { PortfolioPerformanceChart } from "@/components/portfolio-performance-chart"
+import { TradesTable } from "@/components/trades-table"
+import { PortfolioBalances } from "@/components/portfolio-balances"
 import { SelectedBotInfo } from "@/components/selected-bot-info"
 import { SiteHeader } from "@/components/site-header"
 import {
@@ -56,12 +56,8 @@ export default function Page() {
                 </div>
               ) : (
                 <>
-                  <div className="px-4 lg:px-6">
-                    <PortfolioPerformanceChart
-                      performanceHistory={portfolio?.performance_history || []}
-                    />
-                  </div>
-                  <CryptoTradesTable data={trades} />
+                  <PortfolioBalances balances={portfolio?.balances} />
+                  <TradesTable data={trades} />
                 </>
               )}
             </div>

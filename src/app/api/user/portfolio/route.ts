@@ -183,7 +183,7 @@ export async function GET(request: NextRequest) {
               ? (performance24h / totalPortfolioValue) * 100
               : 0,
         },
-        trades: trades.slice(-50), // Return last 50 trades
+        trades: trades.reverse(), // Return all trades, most recent first
         total_trades: trades.length,
         performance_history: performanceHistory,
       },

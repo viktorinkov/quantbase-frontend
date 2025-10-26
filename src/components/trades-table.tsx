@@ -135,7 +135,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
   },
 ]
 
-export function CryptoTradesTable({
+export function TradesTable({
   data: initialData,
 }: {
   data: z.infer<typeof schema>[]
