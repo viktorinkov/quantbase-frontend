@@ -1,12 +1,11 @@
 "use client"
 
 import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { 
   Dialog, 
@@ -18,23 +17,17 @@ import {
   DialogTrigger 
 } from "@/components/ui/dialog"
 import { 
-  Settings, 
   Wand2, 
-  Target,
   CheckCircle,
   Plus,
   Bot
 } from "lucide-react"
 
 interface BotParameters {
-  kSig: number
   window: number
-  stopLoss: number
-  takeProfit: number
-  positionSize: number
-  riskLevel: 'conservative' | 'moderate' | 'aggressive'
-  tradingHours: '24/7' | 'market-hours' | 'custom'
-  customHours?: string
+  k_sigma: number
+  risk_factor: number
+  base_trade_size: number
 }
 
 interface NewBot {
@@ -54,13 +47,10 @@ interface CreateBotDialogProps {
 }
 
 const defaultParameters: BotParameters = {
-  kSig: 2.0,
-  window: 20,
-  stopLoss: 2.0,
-  takeProfit: 4.0,
-  positionSize: 0.1,
-  riskLevel: 'moderate',
-  tradingHours: '24/7'
+  window: 15,
+  k_sigma: 1.5,
+  risk_factor: 0.5,
+  base_trade_size: 0.002
 }
 
 export function CreateBotDialog({ onCreateBot }: CreateBotDialogProps) {
@@ -80,14 +70,14 @@ export function CreateBotDialog({ onCreateBot }: CreateBotDialogProps) {
     setLastProcessedInput(naturalLanguageInput)
     
     try {
-      // Call backend API for Claude AI processing
+      // Call backend API for Claude AI processing (pre-creation, no botId needed)
       const response = await fetch('/api/bots/personalize', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          botId: 'temp', // Temporary ID for processing
+          // No botId - triggers standalone endpoint for parameter generation
           user_preferences: {
             user_request: naturalLanguageInput,
             preferences_description: naturalLanguageInput
@@ -97,14 +87,28 @@ export function CreateBotDialog({ onCreateBot }: CreateBotDialogProps) {
       })
 
       if (!response.ok) {
-        throw new Error('Failed to process natural language input')
+        const errorText = await response.text()
+        let errorMessage = 'Failed to process natural language input'
+        try {
+          const errorData = JSON.parse(errorText)
+          errorMessage = errorData.error || errorData.detail || errorMessage
+        } catch {
+          // If not JSON, use the text as-is
+          if (errorText) errorMessage = errorText
+        }
+        throw new Error(errorMessage)
       }
 
       const result = await response.json()
       
-      // Convert backend parameters to frontend format
+      // Apply personalized parameters from backend
       if (result.personalized_parameters) {
         setParameters(result.personalized_parameters)
+      } else {
+        // Fallback to local processing if response format is unexpected
+        console.log('Unexpected response format, using local fallback')
+        const processedParams = processNaturalLanguageInput(naturalLanguageInput, parameters)
+        setParameters(processedParams)
       }
       
     } catch (error) {
@@ -121,52 +125,41 @@ export function CreateBotDialog({ onCreateBot }: CreateBotDialogProps) {
     const lowerInput = input.toLowerCase()
     const newParams = { ...currentParams }
 
-    // Risk level adjustments
+    // Risk factor adjustments (0.0-1.0, where 0.0 is conservative, 1.0 is aggressive)
     if (lowerInput.includes('conservative') || lowerInput.includes('safe') || lowerInput.includes('low risk')) {
-      newParams.riskLevel = 'conservative'
-      newParams.stopLoss = 1.5
-      newParams.takeProfit = 3.0
-      newParams.positionSize = 0.05
+      newParams.risk_factor = 0.3
+      newParams.base_trade_size = 0.0005 // Smaller trades for conservative
     } else if (lowerInput.includes('aggressive') || lowerInput.includes('high risk') || lowerInput.includes('risky')) {
-      newParams.riskLevel = 'aggressive'
-      newParams.stopLoss = 3.0
-      newParams.takeProfit = 6.0
-      newParams.positionSize = 0.2
+      newParams.risk_factor = 0.7
+      newParams.base_trade_size = 0.005 // Larger trades for aggressive
+    } else if (lowerInput.includes('moderate')) {
+      newParams.risk_factor = 0.5
+      newParams.base_trade_size = 0.002
     }
 
-    // K-Signal adjustments
+    // K-Sigma adjustments (0.5-3.0, typical 1.0-2.0)
     if (lowerInput.includes('sensitive') || lowerInput.includes('quick') || lowerInput.includes('fast')) {
-      newParams.kSig = 1.5
+      newParams.k_sigma = 1.0
     } else if (lowerInput.includes('stable') || lowerInput.includes('slow') || lowerInput.includes('smooth')) {
-      newParams.kSig = 2.5
+      newParams.k_sigma = 2.5
+    } else if (lowerInput.includes('balanced')) {
+      newParams.k_sigma = 1.5
     }
 
-    // Window adjustments
+    // Window adjustments (5-30, typical 10-20)
     if (lowerInput.includes('short term') || lowerInput.includes('quick') || lowerInput.includes('immediate')) {
       newParams.window = 10
     } else if (lowerInput.includes('long term') || lowerInput.includes('patient') || lowerInput.includes('extended')) {
-      newParams.window = 30
+      newParams.window = 25
+    } else if (lowerInput.includes('balanced')) {
+      newParams.window = 15
     }
 
-    // Stop loss adjustments
-    if (lowerInput.includes('tight stop') || lowerInput.includes('close stop')) {
-      newParams.stopLoss = 1.0
-    } else if (lowerInput.includes('wide stop') || lowerInput.includes('loose stop')) {
-      newParams.stopLoss = 4.0
-    }
-
-    // Take profit adjustments
-    if (lowerInput.includes('small profit') || lowerInput.includes('quick profit')) {
-      newParams.takeProfit = 2.0
-    } else if (lowerInput.includes('big profit') || lowerInput.includes('large profit')) {
-      newParams.takeProfit = 8.0
-    }
-
-    // Position size adjustments
+    // Base trade size adjustments (0.0001-0.01)
     if (lowerInput.includes('small position') || lowerInput.includes('tiny position')) {
-      newParams.positionSize = 0.02
+      newParams.base_trade_size = 0.0005
     } else if (lowerInput.includes('large position') || lowerInput.includes('big position')) {
-      newParams.positionSize = 0.3
+      newParams.base_trade_size = 0.008
     }
 
     return newParams
@@ -251,14 +244,6 @@ export function CreateBotDialog({ onCreateBot }: CreateBotDialogProps) {
     }
   }
 
-  const getRiskColor = (risk: string) => {
-    switch (risk) {
-      case 'conservative': return 'text-green-600 bg-green-50'
-      case 'moderate': return 'text-yellow-600 bg-yellow-50'
-      case 'aggressive': return 'text-red-600 bg-red-50'
-      default: return 'text-gray-600 bg-gray-50'
-    }
-  }
 
   return (
     <Dialog 
@@ -373,36 +358,22 @@ export function CreateBotDialog({ onCreateBot }: CreateBotDialogProps) {
           {/* Current Parameters Summary */}
           <Card>
             <CardContent>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Risk Level</span>
-                    <Badge className={getRiskColor(parameters.riskLevel)}>
-                      {parameters.riskLevel}
-                    </Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">K-Signal</span>
-                    <span className="text-sm">{parameters.kSig}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Window</span>
-                    <span className="text-sm">{parameters.window} periods</span>
-                  </div>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between py-2 border-b">
+                  <span className="text-sm font-medium">Window</span>
+                  <span className="text-sm">{parameters.window} periods</span>
                 </div>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Stop Loss</span>
-                    <span className="text-sm">{parameters.stopLoss}%</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Take Profit</span>
-                    <span className="text-sm">{parameters.takeProfit}%</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Position Size</span>
-                    <span className="text-sm">{(parameters.positionSize * 100).toFixed(1)}%</span>
-                  </div>
+                <div className="flex items-center justify-between py-2 border-b">
+                  <span className="text-sm font-medium">K-Sigma</span>
+                  <span className="text-sm">{parameters.k_sigma}</span>
+                </div>
+                <div className="flex items-center justify-between py-2 border-b">
+                  <span className="text-sm font-medium">Risk Factor</span>
+                  <span className="text-sm">{parameters.risk_factor}</span>
+                </div>
+                <div className="flex items-center justify-between py-2">
+                  <span className="text-sm font-medium">Base Trade Size</span>
+                  <span className="text-sm">{parameters.base_trade_size}</span>
                 </div>
               </div>
             </CardContent>

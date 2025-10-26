@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { 
   Dialog, 
@@ -25,14 +24,10 @@ import {
 } from "lucide-react"
 
 interface BotParameters {
-  kSig: number
   window: number
-  stopLoss: number
-  takeProfit: number
-  positionSize: number
-  riskLevel: 'conservative' | 'moderate' | 'aggressive'
-  tradingHours: '24/7' | 'market-hours' | 'custom'
-  customHours?: string
+  k_sigma: number
+  risk_factor: number
+  base_trade_size: number
 }
 
 interface BotParameterCustomizerProps {
@@ -43,13 +38,10 @@ interface BotParameterCustomizerProps {
 }
 
 const defaultParameters: BotParameters = {
-  kSig: 2.0,
-  window: 20,
-  stopLoss: 2.0,
-  takeProfit: 4.0,
-  positionSize: 0.1,
-  riskLevel: 'moderate',
-  tradingHours: '24/7'
+  window: 15,
+  k_sigma: 1.5,
+  risk_factor: 0.5,
+  base_trade_size: 0.002
 }
 
 export function BotParameterCustomizer({ 
@@ -112,52 +104,41 @@ export function BotParameterCustomizer({
     const lowerInput = input.toLowerCase()
     const newParams = { ...currentParams }
 
-    // Risk level adjustments
+    // Risk factor adjustments (0.0-1.0, where 0.0 is conservative, 1.0 is aggressive)
     if (lowerInput.includes('conservative') || lowerInput.includes('safe') || lowerInput.includes('low risk')) {
-      newParams.riskLevel = 'conservative'
-      newParams.stopLoss = 1.5
-      newParams.takeProfit = 3.0
-      newParams.positionSize = 0.05
+      newParams.risk_factor = 0.3
+      newParams.base_trade_size = 0.0005 // Smaller trades for conservative
     } else if (lowerInput.includes('aggressive') || lowerInput.includes('high risk') || lowerInput.includes('risky')) {
-      newParams.riskLevel = 'aggressive'
-      newParams.stopLoss = 3.0
-      newParams.takeProfit = 6.0
-      newParams.positionSize = 0.2
+      newParams.risk_factor = 0.7
+      newParams.base_trade_size = 0.005 // Larger trades for aggressive
+    } else if (lowerInput.includes('moderate')) {
+      newParams.risk_factor = 0.5
+      newParams.base_trade_size = 0.002
     }
 
-    // K-Signal adjustments
+    // K-Sigma adjustments (0.5-3.0, typical 1.0-2.0)
     if (lowerInput.includes('sensitive') || lowerInput.includes('quick') || lowerInput.includes('fast')) {
-      newParams.kSig = 1.5
+      newParams.k_sigma = 1.0
     } else if (lowerInput.includes('stable') || lowerInput.includes('slow') || lowerInput.includes('smooth')) {
-      newParams.kSig = 2.5
+      newParams.k_sigma = 2.5
+    } else if (lowerInput.includes('balanced')) {
+      newParams.k_sigma = 1.5
     }
 
-    // Window adjustments
+    // Window adjustments (5-30, typical 10-20)
     if (lowerInput.includes('short term') || lowerInput.includes('quick') || lowerInput.includes('immediate')) {
       newParams.window = 10
     } else if (lowerInput.includes('long term') || lowerInput.includes('patient') || lowerInput.includes('extended')) {
-      newParams.window = 30
+      newParams.window = 25
+    } else if (lowerInput.includes('balanced')) {
+      newParams.window = 15
     }
 
-    // Stop loss adjustments
-    if (lowerInput.includes('tight stop') || lowerInput.includes('close stop')) {
-      newParams.stopLoss = 1.0
-    } else if (lowerInput.includes('wide stop') || lowerInput.includes('loose stop')) {
-      newParams.stopLoss = 4.0
-    }
-
-    // Take profit adjustments
-    if (lowerInput.includes('small profit') || lowerInput.includes('quick profit')) {
-      newParams.takeProfit = 2.0
-    } else if (lowerInput.includes('big profit') || lowerInput.includes('large profit')) {
-      newParams.takeProfit = 8.0
-    }
-
-    // Position size adjustments
+    // Base trade size adjustments (0.0001-0.01)
     if (lowerInput.includes('small position') || lowerInput.includes('tiny position')) {
-      newParams.positionSize = 0.02
+      newParams.base_trade_size = 0.0005
     } else if (lowerInput.includes('large position') || lowerInput.includes('big position')) {
-      newParams.positionSize = 0.3
+      newParams.base_trade_size = 0.008
     }
 
     return newParams
@@ -200,15 +181,6 @@ export function BotParameterCustomizer({
     }
   }
 
-  const getRiskColor = (risk: string) => {
-    switch (risk) {
-      case 'conservative': return 'text-green-600 bg-green-50'
-      case 'moderate': return 'text-yellow-600 bg-yellow-50'
-      case 'aggressive': return 'text-red-600 bg-red-50'
-      default: return 'text-gray-600 bg-gray-50'
-    }
-  }
-
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
@@ -224,7 +196,7 @@ export function BotParameterCustomizer({
             Customize {botName} Parameters
           </DialogTitle>
           <DialogDescription>
-            Adjust trading parameters using natural language or manual controls
+            Adjust the four core trading parameters using natural language or manual controls
           </DialogDescription>
         </DialogHeader>
 
@@ -242,7 +214,7 @@ export function BotParameterCustomizer({
                 <Label htmlFor="natural-input">Describe your trading preferences</Label>
                 <Textarea
                   id="natural-input"
-                  placeholder="e.g., 'I want a conservative strategy with tight stop losses and quick profits' or 'Make it more aggressive with larger positions'"
+                  placeholder="e.g., 'I want a conservative strategy with shorter lookback periods' or 'Make it more aggressive with larger positions and higher sensitivity'"
                   value={naturalLanguageInput}
                   onChange={(e) => setNaturalLanguageInput(e.target.value)}
                   className="min-h-[80px]"
@@ -290,119 +262,71 @@ export function BotParameterCustomizer({
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Risk Level */}
+              {/* Window Parameter */}
               <div>
-                <Label className="text-base font-medium">Risk Level</Label>
-                <div className="flex gap-2 mt-2">
-                  {(['conservative', 'moderate', 'aggressive'] as const).map((risk) => (
-                    <Button
-                      key={risk}
-                      variant={parameters.riskLevel === risk ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setParameters({...parameters, riskLevel: risk})}
-                      className="capitalize"
-                    >
-                      {risk}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Technical Parameters */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="ksig">K-Signal Sensitivity</Label>
-                  <Input
-                    id="ksig"
-                    type="number"
-                    step="0.1"
-                    min="0.5"
-                    max="5.0"
-                    value={parameters.kSig}
-                    onChange={(e) => setParameters({...parameters, kSig: parseFloat(e.target.value)})}
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Lower = more sensitive to price changes
-                  </p>
-                </div>
-
-                <div>
-                  <Label htmlFor="window">Analysis Window</Label>
-                  <Input
-                    id="window"
-                    type="number"
-                    min="5"
-                    max="50"
-                    value={parameters.window}
-                    onChange={(e) => setParameters({...parameters, window: parseInt(e.target.value)})}
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Number of periods for analysis
-                  </p>
-                </div>
-              </div>
-
-              {/* Risk Management */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="stoploss">Stop Loss (%)</Label>
-                  <Input
-                    id="stoploss"
-                    type="number"
-                    step="0.1"
-                    min="0.5"
-                    max="10.0"
-                    value={parameters.stopLoss}
-                    onChange={(e) => setParameters({...parameters, stopLoss: parseFloat(e.target.value)})}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="takeprofit">Take Profit (%)</Label>
-                  <Input
-                    id="takeprofit"
-                    type="number"
-                    step="0.1"
-                    min="1.0"
-                    max="20.0"
-                    value={parameters.takeProfit}
-                    onChange={(e) => setParameters({...parameters, takeProfit: parseFloat(e.target.value)})}
-                  />
-                </div>
-              </div>
-
-              {/* Position Sizing */}
-              <div>
-                <Label htmlFor="positionsize">Position Size (% of portfolio)</Label>
+                <Label htmlFor="window">Window (Rolling Lookback)</Label>
                 <Input
-                  id="positionsize"
+                  id="window"
                   type="number"
-                  step="0.01"
-                  min="0.01"
-                  max="1.0"
-                  value={parameters.positionSize}
-                  onChange={(e) => setParameters({...parameters, positionSize: parseFloat(e.target.value)})}
+                  min="5"
+                  max="30"
+                  value={parameters.window}
+                  onChange={(e) => setParameters({...parameters, window: parseInt(e.target.value)})}
                 />
                 <p className="text-xs text-muted-foreground mt-1">
-                  How much of your portfolio to risk per trade
+                  Number of time periods to look back (5-30, typical 10-20). Lower values = more responsive.
                 </p>
               </div>
 
-              {/* Trading Hours */}
+              {/* K-Sigma Parameter */}
               <div>
-                <Label className="text-base font-medium">Trading Schedule</Label>
-                <div className="flex gap-2 mt-2">
-                  {(['24/7', 'market-hours', 'custom'] as const).map((schedule) => (
-                    <Button
-                      key={schedule}
-                      variant={parameters.tradingHours === schedule ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setParameters({...parameters, tradingHours: schedule})}
-                    >
-                      {schedule === 'market-hours' ? 'Market Hours' : schedule}
-                    </Button>
-                  ))}
-                </div>
+                <Label htmlFor="k_sigma">K-Sigma (Standard Deviation Multiplier)</Label>
+                <Input
+                  id="k_sigma"
+                  type="number"
+                  step="0.1"
+                  min="0.5"
+                  max="3.0"
+                  value={parameters.k_sigma}
+                  onChange={(e) => setParameters({...parameters, k_sigma: parseFloat(e.target.value)})}
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Multiplier for volatility calculations (0.5-3.0, typical 1.0-2.0). Lower values = tighter bands, more trades.
+                </p>
+              </div>
+
+              {/* Risk Factor Parameter */}
+              <div>
+                <Label htmlFor="risk_factor">Risk Factor (Risk Appetite)</Label>
+                <Input
+                  id="risk_factor"
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  max="1"
+                  value={parameters.risk_factor}
+                  onChange={(e) => setParameters({...parameters, risk_factor: parseFloat(e.target.value)})}
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Controls risk behavior (0.0-1.0). 0.0 = conservative, 1.0 = aggressive. Typical: 0.3-0.7.
+                </p>
+              </div>
+
+              {/* Base Trade Size Parameter */}
+              <div>
+                <Label htmlFor="base_trade_size">Base Trade Size (Position Sizing)</Label>
+                <Input
+                  id="base_trade_size"
+                  type="number"
+                  step="0.0001"
+                  min="0.0001"
+                  max="0.01"
+                  value={parameters.base_trade_size}
+                  onChange={(e) => setParameters({...parameters, base_trade_size: parseFloat(e.target.value)})}
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Base size of trades in the asset being traded (0.0001-0.01, typical 0.0005-0.002). Higher values = larger positions.
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -416,36 +340,22 @@ export function BotParameterCustomizer({
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Risk Level</span>
-                    <Badge className={getRiskColor(parameters.riskLevel)}>
-                      {parameters.riskLevel}
-                    </Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">K-Signal</span>
-                    <span className="text-sm">{parameters.kSig}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Window</span>
-                    <span className="text-sm">{parameters.window} periods</span>
-                  </div>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between py-2 border-b">
+                  <span className="text-sm font-medium">Window</span>
+                  <span className="text-sm">{parameters.window} periods</span>
                 </div>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Stop Loss</span>
-                    <span className="text-sm">{parameters.stopLoss}%</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Take Profit</span>
-                    <span className="text-sm">{parameters.takeProfit}%</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Position Size</span>
-                    <span className="text-sm">{(parameters.positionSize * 100).toFixed(1)}%</span>
-                  </div>
+                <div className="flex items-center justify-between py-2 border-b">
+                  <span className="text-sm font-medium">K-Sigma</span>
+                  <span className="text-sm">{parameters.k_sigma}</span>
+                </div>
+                <div className="flex items-center justify-between py-2 border-b">
+                  <span className="text-sm font-medium">Risk Factor</span>
+                  <span className="text-sm">{parameters.risk_factor}</span>
+                </div>
+                <div className="flex items-center justify-between py-2">
+                  <span className="text-sm font-medium">Base Trade Size</span>
+                  <span className="text-sm">{parameters.base_trade_size}</span>
                 </div>
               </div>
             </CardContent>
