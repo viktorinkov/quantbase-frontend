@@ -146,13 +146,14 @@ export default function Page() {
                 </div>
               )}
               <div className="grid gap-6">
-                {bots.map((bot) => (
+                {bots.map((bot, index) => (
                   <BotCard
                     key={bot.id}
                     id={bot.id}
                     name={bot.name}
                     modelName={bot.modelName}
                     todaysTrades={bot.todaysTrades}
+                    index={index}
                   />
                 ))}
               </div>
