@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
 
 import {
   Card,
@@ -67,6 +67,16 @@ export function CryptoChart({
     const startDate = new Date(referenceDate.getTime() - millisecondsToSubtract)
     return date >= startDate
   })
+
+  // Calculate Y-axis domain for better scaling
+  const prices = filteredData.map(item => item.price)
+  const minPrice = Math.min(...prices)
+  const maxPrice = Math.max(...prices)
+  const padding = (maxPrice - minPrice) * 0.1 // 10% padding
+  const yAxisDomain = [
+    Math.max(0, minPrice - padding),
+    maxPrice + padding
+  ]
 
   const priceChangeColor = priceChange24h >= 0 ? "text-green-600" : "text-red-600"
   const priceChangeSign = priceChange24h >= 0 ? "+" : ""
@@ -159,6 +169,21 @@ export function CryptoChart({
                   month: "short",
                   day: "numeric",
                 })
+              }}
+            />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              domain={yAxisDomain}
+              tickFormatter={(value) => {
+                if (value >= 1000) {
+                  return `$${(value / 1000).toFixed(1)}k`
+                } else if (value >= 1) {
+                  return `$${value.toFixed(0)}`
+                } else {
+                  return `$${value.toFixed(3)}`
+                }
               }}
             />
             <ChartTooltip
