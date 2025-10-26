@@ -8,11 +8,47 @@ interface BotTrade {
   timestamp: string
 }
 
+interface BotStats {
+  updated_at: string
+  hourly_pnl_usd: {
+    value: number
+    estimated: boolean
+    basis: string
+  }
+  daily_pnl_usd: {
+    value: number
+    estimated: boolean
+    basis: string
+  }
+  trades_hourly: {
+    value: number
+    estimated: boolean
+    basis: string
+  }
+  win_rate_daily: {
+    value: number
+    estimated: boolean
+    basis: string
+  }
+  samples: {
+    ticks_lookback: number
+    trips_total: number
+    trips_1h: number
+    trips_today: number
+    open_buys: number
+  }
+  assumptions: {
+    trade_size_SOL: number
+    lookback_days_for_ticks: number
+  }
+}
+
 export interface Bot {
   id: string
   name: string
   modelName: string
   todaysTrades: BotTrade[]
+  stats?: BotStats
 }
 
 interface SelectedBotContextType {

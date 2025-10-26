@@ -14,11 +14,47 @@ interface BotTrade {
   timestamp: string
 }
 
+interface BotStats {
+  updated_at: string
+  hourly_pnl_usd: {
+    value: number
+    estimated: boolean
+    basis: string
+  }
+  daily_pnl_usd: {
+    value: number
+    estimated: boolean
+    basis: string
+  }
+  trades_hourly: {
+    value: number
+    estimated: boolean
+    basis: string
+  }
+  win_rate_daily: {
+    value: number
+    estimated: boolean
+    basis: string
+  }
+  samples: {
+    ticks_lookback: number
+    trips_total: number
+    trips_1h: number
+    trips_today: number
+    open_buys: number
+  }
+  assumptions: {
+    trade_size_SOL: number
+    lookback_days_for_ticks: number
+  }
+}
+
 interface BotCardProps {
   id: string
   name: string
   modelName: string
   todaysTrades: BotTrade[]
+  stats?: BotStats
   index?: number
 }
 
@@ -27,6 +63,7 @@ export function BotCard({
   name,
   modelName,
   todaysTrades,
+  stats,
   index = 0,
 }: BotCardProps) {
   const { selectedBot, selectBot, deselectBot } = useSelectedBot()
@@ -81,6 +118,16 @@ export function BotCard({
             <div>
               <h3 className="font-semibold text-lg">{name}</h3>
               <p className="text-sm text-muted-foreground mt-1">Model: {modelName}</p>
+              {stats?.updated_at && (
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Updated: {new Date(stats.updated_at).toLocaleString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </p>
+              )}
             </div>
           </div>
           <Button
@@ -100,9 +147,119 @@ export function BotCard({
         </div>
       </CardHeader>
       <CardContent>
-        <div>
-          <h4 className="text-sm font-medium text-muted-foreground mb-3">Today&apos;s Trades</h4>
-          <BotTradesTable trades={todaysTrades} />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {/* Trades Table Column */}
+          <div>
+            <h4 className="text-sm font-medium text-muted-foreground mb-3">Today&apos;s Trades</h4>
+            <BotTradesTable trades={todaysTrades} compact />
+          </div>
+
+          {/* Stats Cards Column */}
+          {stats ? (
+            <div className="space-y-3">
+              {/* Hourly PnL USD */}
+              <Card className="border">
+                <CardContent className="p-3">
+                  <div className="text-xs text-muted-foreground">Hourly PnL (USD)</div>
+                  <div className="text-2xl font-bold mt-1">
+                    ${stats.hourly_pnl_usd.value.toFixed(5)}
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-1">
+                    {stats.hourly_pnl_usd.estimated ? "Estimated" : "Actual"} • {stats.hourly_pnl_usd.basis}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Daily PnL USD */}
+              <Card className="border">
+                <CardContent className="p-3">
+                  <div className="text-xs text-muted-foreground">Daily PnL (USD)</div>
+                  <div className="text-2xl font-bold mt-1">
+                    ${stats.daily_pnl_usd.value.toFixed(5)}
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-1">
+                    {stats.daily_pnl_usd.estimated ? "Estimated" : "Actual"} • {stats.daily_pnl_usd.basis}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Trades Hourly */}
+              <Card className="border">
+                <CardContent className="p-3">
+                  <div className="text-xs text-muted-foreground">Trades (Hourly)</div>
+                  <div className="text-2xl font-bold mt-1">
+                    {stats.trades_hourly.value}
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-1">
+                    {stats.trades_hourly.estimated ? "Estimated" : "Actual"} • {stats.trades_hourly.basis}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Win Rate Daily */}
+              <Card className="border">
+                <CardContent className="p-3">
+                  <div className="text-xs text-muted-foreground">Win Rate (Daily)</div>
+                  <div className="text-2xl font-bold mt-1">
+                    {(stats.win_rate_daily.value * 100).toFixed(1)}%
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-1">
+                    {stats.win_rate_daily.estimated ? "Estimated" : "Actual"} • {stats.win_rate_daily.basis}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Samples */}
+              <Card className="border">
+                <CardContent className="p-3">
+                  <div className="text-xs text-muted-foreground mb-2">Samples</div>
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div>
+                      <span className="text-muted-foreground">Ticks Lookback:</span>
+                      <span className="font-semibold ml-1">{stats.samples.ticks_lookback}</span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Trips Total:</span>
+                      <span className="font-semibold ml-1">{stats.samples.trips_total}</span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Trips 1h:</span>
+                      <span className="font-semibold ml-1">{stats.samples.trips_1h}</span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Trips Today:</span>
+                      <span className="font-semibold ml-1">{stats.samples.trips_today}</span>
+                    </div>
+                    <div className="col-span-2">
+                      <span className="text-muted-foreground">Open Buys:</span>
+                      <span className="font-semibold ml-1">{stats.samples.open_buys}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Assumptions */}
+              <Card className="border">
+                <CardContent className="p-3">
+                  <div className="text-xs text-muted-foreground mb-2">Assumptions</div>
+                  <div className="space-y-1 text-xs">
+                    <div>
+                      <span className="text-muted-foreground">Trade Size (SOL):</span>
+                      <span className="font-semibold ml-1">{stats.assumptions.trade_size_SOL}</span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Lookback Days:</span>
+                      <span className="font-semibold ml-1">{stats.assumptions.lookback_days_for_ticks}</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          ) : (
+            <div className="flex items-center justify-center p-8">
+              <p className="text-sm text-muted-foreground">No stats available</p>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>

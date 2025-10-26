@@ -71,7 +71,8 @@ export async function GET() {
           id: bot._id.toString(),
           name: displayName,
           modelName: modelName,
-          todaysTrades: todaysTradesFormatted
+          todaysTrades: todaysTradesFormatted,
+          stats: bot.stats || undefined
         };
       })
     );
