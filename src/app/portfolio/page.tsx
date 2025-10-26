@@ -31,7 +31,7 @@ export default function Page() {
 
   // Transform trades data
   const trades = portfolio?.trades.map((trade, index) => {
-    const walletBalance = trade.wallet_balance_sol || 0
+    const amount = trade.amount || 0
     const priceUsd = trade.price_usd || 0
     return {
       id: index + 1, // Use index as numeric ID
@@ -39,10 +39,9 @@ export default function Page() {
       time: new Date(trade.timestamp).toLocaleTimeString(),
       cryptocurrency: `Solana (SOL)`,
       type: trade.action === 'BUY' ? 'Buy' : trade.action === 'SELL' ? 'Sell' : 'Hold',
-      amount: walletBalance.toFixed(4),
+      amount: amount.toFixed(4),
       price: priceUsd.toFixed(2),
-      total: (walletBalance * priceUsd).toFixed(2),
-      fee: '0.00', // Not tracked in ticks
+      total: (amount * priceUsd).toFixed(2),
     }
   }) || portfolioData.trades
 

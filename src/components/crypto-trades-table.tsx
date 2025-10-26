@@ -65,7 +65,6 @@ export const schema = z.object({
   amount: z.string(),
   price: z.string(),
   total: z.string(),
-  fee: z.string(),
 })
 
 const columns: ColumnDef<z.infer<typeof schema>>[] = [
@@ -128,18 +127,6 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     cell: ({ row }) => (
       <div className="text-right font-mono font-semibold">
         ${parseFloat(row.original.total).toLocaleString("en-US", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2
-        })}
-      </div>
-    ),
-  },
-  {
-    accessorKey: "fee",
-    header: () => <div className="text-right">Fee (USD)</div>,
-    cell: ({ row }) => (
-      <div className="text-right font-mono text-muted-foreground">
-        ${parseFloat(row.original.fee).toLocaleString("en-US", {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2
         })}

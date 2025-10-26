@@ -19,6 +19,7 @@ export interface PortfolioTrade {
   id: string
   timestamp: string
   action: string
+  amount: number
   price_usd: number
   wallet_balance_sol: number
   profit_loss_usd: number

@@ -59,16 +59,29 @@ export async function GET(request: NextRequest) {
     const totalPortfolioValue = usdBalance + solValueInUsd;
 
     // Calculate trades from ticks
+    // Parse action field which can be: "BUY 0.0010", "SELL 0.0010", or just "WARMUP"
     const trades = ticks
-      .filter(tick => tick.action && tick.action !== 'WARMUP')
-      .map(tick => ({
-        id: tick._id.toString(),
-        timestamp: tick.timestamp,
-        action: tick.action,
-        price_usd: tick.price_usd,
-        wallet_balance_sol: tick.wallet_balance_sol,
-        profit_loss_usd: tick.profit_loss_usd,
-      }));
+      .filter(tick => {
+        if (!tick.action) return false;
+        // Only include entries that match "BUY [amount]" or "SELL [amount]" format
+        return /^(BUY|SELL)\s+[\d.]+$/.test(tick.action);
+      })
+      .map(tick => {
+        // Parse action and amount from string like "BUY 0.0010"
+        const actionMatch = tick.action.match(/^(BUY|SELL)\s+([\d.]+)$/);
+        const actionType = actionMatch ? actionMatch[1] : tick.action;
+        const amount = actionMatch ? parseFloat(actionMatch[2]) : (tick.wallet_balance_sol || 0);
+
+        return {
+          id: tick._id.toString(),
+          timestamp: tick.timestamp,
+          action: actionType,
+          amount: amount,
+          price_usd: tick.price_usd,
+          wallet_balance_sol: tick.wallet_balance_sol,
+          profit_loss_usd: tick.profit_loss_usd,
+        };
+      });
 
     // Calculate performance metrics
     const totalProfitLoss = ticks.reduce(
