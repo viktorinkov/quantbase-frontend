@@ -1,20 +1,21 @@
 import { NextResponse } from 'next/server'
 
 // CoinGecko API mapping for crypto IDs
+// SUI is placed first as our sponsor
 const CRYPTO_IDS = {
+  SUI: 'sui',
   BTC: 'bitcoin',
   ETH: 'ethereum', 
-  XRP: 'ripple',
   SOL: 'solana',
-  SUI: 'sui',
+  XRP: 'ripple',
 } as const
 
 const CRYPTO_NAMES = {
+  SUI: 'Sui',
   BTC: 'Bitcoin',
   ETH: 'Ethereum',
-  XRP: 'Ripple', 
   SOL: 'Solana',
-  SUI: 'Sui',
+  XRP: 'Ripple', 
 } as const
 
 // Simple in-memory cache to avoid hitting rate limits
