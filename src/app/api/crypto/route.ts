@@ -43,7 +43,7 @@ export async function GET() {
 
           return {
             date: dateStr,
-            price: doc.price,
+            price: doc.price_usd || doc.price || 0,
           }
         })
 
@@ -70,8 +70,10 @@ export async function GET() {
           compareDoc = documents[0]
         }
 
-        const priceChange24h = compareDoc.price && latestDoc.price
-          ? ((latestDoc.price - compareDoc.price) / compareDoc.price) * 100
+        const latestPrice = latestDoc.price_usd || latestDoc.price || 0
+        const comparePrice = compareDoc.price_usd || compareDoc.price || 0
+        const priceChange24h = comparePrice && latestPrice
+          ? ((latestPrice - comparePrice) / comparePrice) * 100
           : 0
 
         // Determine the crypto name and symbol from collection name
@@ -81,7 +83,7 @@ export async function GET() {
           id: collectionName.toLowerCase(),
           name: cryptoInfo.name,
           symbol: cryptoInfo.symbol,
-          currentPrice: latestDoc.price,
+          currentPrice: latestPrice,
           priceChange24h: priceChange24h,
           chartData: chartData,
         }

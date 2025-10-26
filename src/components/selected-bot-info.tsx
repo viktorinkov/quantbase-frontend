@@ -1,10 +1,8 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { X, TrendingUp, Users, DollarSign } from "lucide-react"
+import { X } from "lucide-react"
 import { useSelectedBot } from "@/contexts/selected-bot-context"
 
 export function SelectedBotInfo() {
@@ -30,15 +28,11 @@ export function SelectedBotInfo() {
     )
   }
 
-  const formatNumber = (num: number) => {
-    if (num >= 1000000) {
-      return `$${(num / 1000000).toFixed(1)}M`
-    }
-    if (num >= 1000) {
-      return `$${(num / 1000).toFixed(0)}K`
-    }
-    return `$${num}`
-  }
+  // Calculate total profit from today's trades
+  const todaysProfit = selectedBot.todaysTradesToday?.reduce((sum, trade) => sum + trade.profit, 0) ?? 0
+
+  // Calculate total profit from all daily performance
+  const totalProfit = selectedBot.dailyPerformance?.reduce((sum, day) => sum + day.performance, 0) ?? 0
 
   return (
     <div className="px-4 lg:px-6">
@@ -57,58 +51,27 @@ export function SelectedBotInfo() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="flex items-start gap-6">
+          <div className="space-y-4">
             {/* Bot Info */}
-            <div className="flex items-center gap-4">
-              <div className="h-16 w-16 rounded-lg overflow-hidden bg-muted flex items-center justify-center">
-                <img src={selectedBot.image} alt={selectedBot.name} className="h-full w-full object-cover" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-xl mb-1">{selectedBot.name}</h3>
-                <div className="flex items-center gap-2">
-                  <Avatar className="h-6 w-6">
-                    <AvatarImage src={selectedBot.creator.avatar} alt={selectedBot.creator.username} />
-                    <AvatarFallback>{selectedBot.creator.username[0].toUpperCase()}</AvatarFallback>
-                  </Avatar>
-                  <span className="text-sm text-muted-foreground">@{selectedBot.creator.username}</span>
-                </div>
-              </div>
+            <div>
+              <h3 className="font-semibold text-xl mb-1">{selectedBot.name}</h3>
+              <p className="text-sm text-muted-foreground">Model: {selectedBot.modelName}</p>
             </div>
 
-            {/* Stats */}
-            <div className="flex-1 grid grid-cols-3 gap-4">
+            {/* Performance Stats */}
+            <div className="grid grid-cols-2 gap-4">
               <div className="rounded-lg border bg-card p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">Monthly Performance</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <p className="text-2xl font-semibold">
-                    {selectedBot.monthlyPerformance >= 0 ? "+" : ""}{selectedBot.monthlyPerformance.toFixed(1)}%
-                  </p>
-                  <Badge
-                    variant={selectedBot.monthlyPerformance >= 0 ? "default" : "destructive"}
-                    className="text-xs"
-                  >
-                    {selectedBot.monthlyPerformance >= 0 ? "Profit" : "Loss"}
-                  </Badge>
-                </div>
+                <p className="text-sm text-muted-foreground mb-1">Today&apos;s P/L</p>
+                <p className={`text-2xl font-semibold ${todaysProfit >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                  {todaysProfit >= 0 ? "+" : ""}${todaysProfit.toFixed(2)}
+                </p>
               </div>
 
               <div className="rounded-lg border bg-card p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <DollarSign className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">Total Volume</span>
-                </div>
-                <p className="text-2xl font-semibold">{formatNumber(selectedBot.totalVolume)}</p>
-              </div>
-
-              <div className="rounded-lg border bg-card p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <Users className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">Active Users</span>
-                </div>
-                <p className="text-2xl font-semibold">{selectedBot.userCount.toLocaleString()}</p>
+                <p className="text-sm text-muted-foreground mb-1">7-Day P/L</p>
+                <p className={`text-2xl font-semibold ${totalProfit >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                  {totalProfit >= 0 ? "+" : ""}${totalProfit.toFixed(2)}
+                </p>
               </div>
             </div>
           </div>

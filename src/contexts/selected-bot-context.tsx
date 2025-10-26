@@ -1,8 +1,8 @@
 "use client"
 
-import React, { createContext, useContext, useState, useEffect } from "react"
+import React, { createContext, useContext, useState } from "react"
 
-interface TopWin {
+interface Trade {
   pair: string
   profit: number
   timestamp: string
@@ -13,58 +13,96 @@ interface DailyPerformance {
   performance: number
 }
 
-interface Creator {
-  username: string
-  avatar: string
-}
-
 export interface Bot {
   id: string
   name: string
-  image: string
-  creator: Creator
-  monthlyPerformance: number
-  totalVolume: number
-  userCount: number
+  modelName: string
   dailyPerformance: DailyPerformance[]
-  topWinsToday: TopWin[]
+  todaysTradesToday: Trade[]
 }
 
 interface SelectedBotContextType {
   selectedBot: Bot | null
   selectBot: (bot: Bot) => void
   deselectBot: () => void
+  isUpdating: boolean
 }
 
 const SelectedBotContext = createContext<SelectedBotContextType | undefined>(undefined)
 
+// Default username - in a real app, this would come from authentication
+const DEFAULT_USERNAME = "demo"
+
 export function SelectedBotProvider({ children }: { children: React.ReactNode }) {
   const [selectedBot, setSelectedBot] = useState<Bot | null>(null)
+  const [isUpdating, setIsUpdating] = useState(false)
 
-  // Load selected bot from localStorage on mount
-  useEffect(() => {
-    const stored = localStorage.getItem("selectedBot")
-    if (stored) {
-      try {
-        setSelectedBot(JSON.parse(stored))
-      } catch (e) {
-        console.error("Failed to parse stored bot", e)
+  const selectBot = async (bot: Bot) => {
+    setIsUpdating(true)
+    try {
+      // Update local state
+      setSelectedBot(bot)
+
+      // Update the database with the new active model
+      const response = await fetch('/api/user/model', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: DEFAULT_USERNAME,
+          modelName: bot.modelName,
+        }),
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        console.error('Failed to update model in database:', error)
+      } else {
+        const data = await response.json()
+        console.log('Model updated successfully:', data)
       }
+    } catch (error) {
+      console.error('Error updating selected bot:', error)
+    } finally {
+      setIsUpdating(false)
     }
-  }, [])
-
-  const selectBot = (bot: Bot) => {
-    setSelectedBot(bot)
-    localStorage.setItem("selectedBot", JSON.stringify(bot))
   }
 
-  const deselectBot = () => {
-    setSelectedBot(null)
-    localStorage.removeItem("selectedBot")
+  const deselectBot = async () => {
+    setIsUpdating(true)
+    try {
+      // Update local state
+      setSelectedBot(null)
+
+      // Update the database to remove active model (set to null)
+      const response = await fetch('/api/user/model', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: DEFAULT_USERNAME,
+          modelName: null,
+        }),
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        console.error('Failed to deselect model in database:', error)
+      } else {
+        const data = await response.json()
+        console.log('Model deselected successfully:', data)
+      }
+    } catch (error) {
+      console.error('Error deselecting bot:', error)
+    } finally {
+      setIsUpdating(false)
+    }
   }
 
   return (
-    <SelectedBotContext.Provider value={{ selectedBot, selectBot, deselectBot }}>
+    <SelectedBotContext.Provider value={{ selectedBot, selectBot, deselectBot, isUpdating }}>
       {children}
     </SelectedBotContext.Provider>
   )

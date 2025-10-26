@@ -2,7 +2,7 @@ const { MongoClient } = require('mongodb');
 const fs = require('fs');
 const path = require('path');
 
-// Manually load .env.local
+// Manually load .env.local (but don't overwrite existing env vars)
 const envPath = path.join(__dirname, '..', '.env.local');
 if (fs.existsSync(envPath)) {
   const envContent = fs.readFileSync(envPath, 'utf-8');
@@ -11,7 +11,10 @@ if (fs.existsSync(envPath)) {
     if (match) {
       const key = match[1].trim();
       const value = match[2].trim();
-      process.env[key] = value;
+      // Only set if not already defined
+      if (!process.env[key]) {
+        process.env[key] = value;
+      }
     }
   });
 }
@@ -43,8 +46,8 @@ async function inspectDatabase() {
     });
     console.log();
 
-    // Inspect solana_db database
-    const dbName = 'solana_db';
+    // Inspect database (from env or default to solana_db)
+    const dbName = process.env.MONGODB_DB || 'solana_db';
     console.log(`Inspecting database: ${dbName}`);
     const db = client.db(dbName);
 

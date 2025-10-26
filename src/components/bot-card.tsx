@@ -1,15 +1,13 @@
 "use client"
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Cell } from "recharts"
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
-import { TrendingUp, Users, DollarSign, Check } from "lucide-react"
+import { Check } from "lucide-react"
 import { useSelectedBot } from "@/contexts/selected-bot-context"
 
-interface TopWin {
+interface Trade {
   pair: string
   profit: number
   timestamp: string
@@ -20,46 +18,23 @@ interface DailyPerformance {
   performance: number
 }
 
-interface Creator {
-  username: string
-  avatar: string
-}
-
 interface BotCardProps {
   id: string
   name: string
-  image: string
-  creator: Creator
-  monthlyPerformance: number
-  totalVolume: number
-  userCount: number
+  modelName: string
   dailyPerformance: DailyPerformance[]
-  topWinsToday: TopWin[]
+  todaysTradesToday: Trade[]
 }
 
 export function BotCard({
   id,
   name,
-  image,
-  creator,
-  monthlyPerformance,
-  totalVolume,
-  userCount,
+  modelName,
   dailyPerformance,
-  topWinsToday,
+  todaysTradesToday,
 }: BotCardProps) {
   const { selectedBot, selectBot, deselectBot } = useSelectedBot()
   const isSelected = selectedBot?.id === id
-
-  const formatNumber = (num: number) => {
-    if (num >= 1000000) {
-      return `$${(num / 1000000).toFixed(1)}M`
-    }
-    if (num >= 1000) {
-      return `$${(num / 1000).toFixed(0)}K`
-    }
-    return `$${num}`
-  }
 
   const chartData = dailyPerformance.map((item) => ({
     date: new Date(item.date).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
@@ -68,7 +43,7 @@ export function BotCard({
 
   const chartConfig = {
     performance: {
-      label: "Performance",
+      label: "Performance ($)",
       color: "hsl(var(--chart-1))",
     },
   }
@@ -80,13 +55,9 @@ export function BotCard({
       selectBot({
         id,
         name,
-        image,
-        creator,
-        monthlyPerformance,
-        totalVolume,
-        userCount,
+        modelName,
         dailyPerformance,
-        topWinsToday,
+        todaysTradesToday,
       })
     }
   }
@@ -95,65 +66,46 @@ export function BotCard({
     <Card className="overflow-hidden">
       <CardHeader className="pb-4">
         <div className="flex items-start justify-between">
-          <div className="flex items-center gap-3">
-            <div className="h-12 w-12 rounded-lg overflow-hidden bg-muted flex items-center justify-center">
-              <img src={image} alt={name} className="h-full w-full object-cover" />
-            </div>
-            <div>
-              <h3 className="font-semibold text-lg">{name}</h3>
-              <div className="flex items-center gap-2 mt-1">
-                <Avatar className="h-5 w-5">
-                  <AvatarImage src={creator.avatar} alt={creator.username} />
-                  <AvatarFallback>{creator.username[0].toUpperCase()}</AvatarFallback>
-                </Avatar>
-                <span className="text-sm text-muted-foreground">@{creator.username}</span>
-              </div>
-            </div>
+          <div>
+            <h3 className="font-semibold text-lg">{name}</h3>
+            <p className="text-sm text-muted-foreground mt-1">Model: {modelName}</p>
           </div>
-          <div className="flex items-center gap-2">
-            <Badge
-              variant={monthlyPerformance >= 0 ? "default" : "destructive"}
-              className="text-sm"
-            >
-              {monthlyPerformance >= 0 ? "+" : ""}{monthlyPerformance.toFixed(1)}%
-            </Badge>
-            <Button
-              onClick={handleToggleSelect}
-              variant={isSelected ? "default" : "outline"}
-              size="sm"
-            >
-              {isSelected ? (
-                <>
-                  <Check className="mr-2 h-4 w-4" />
-                  Currently Selected
-                </>
-              ) : (
-                "Select Bot"
-              )}
-            </Button>
-          </div>
+          <Button
+            onClick={handleToggleSelect}
+            variant={isSelected ? "default" : "outline"}
+            size="sm"
+          >
+            {isSelected ? (
+              <>
+                <Check className="mr-2 h-4 w-4" />
+                Currently Selected
+              </>
+            ) : (
+              "Select Bot"
+            )}
+          </Button>
         </div>
       </CardHeader>
       <CardContent>
         <div className="flex gap-4">
-          {/* Left Column - Top Wins */}
+          {/* Left Column - Today's Trades */}
           <div className="w-1/3 space-y-2">
-            <h4 className="text-sm font-medium text-muted-foreground mb-3">Today's Top Wins</h4>
-            {topWinsToday.length > 0 ? (
+            <h4 className="text-sm font-medium text-muted-foreground mb-3">Today&apos;s Trades</h4>
+            {todaysTradesToday.length > 0 ? (
               <div className="space-y-2">
-                {topWinsToday.map((win, index) => (
+                {todaysTradesToday.map((trade, index) => (
                   <div
                     key={index}
                     className="rounded-lg border bg-card p-3 text-sm"
                   >
                     <div className="flex items-center justify-between mb-1">
-                      <span className="font-medium">{win.pair}</span>
-                      <span className="text-green-500 font-semibold">
-                        +{win.profit.toFixed(1)}%
+                      <span className="font-medium">{trade.pair}</span>
+                      <span className={trade.profit >= 0 ? "text-green-500 font-semibold" : "text-red-500 font-semibold"}>
+                        {trade.profit >= 0 ? "+" : ""}${trade.profit.toFixed(2)}
                       </span>
                     </div>
                     <div className="text-xs text-muted-foreground">
-                      {new Date(win.timestamp).toLocaleTimeString("en-US", {
+                      {new Date(trade.timestamp).toLocaleTimeString("en-US", {
                         hour: "2-digit",
                         minute: "2-digit"
                       })}
@@ -168,14 +120,14 @@ export function BotCard({
             )}
           </div>
 
-          {/* Right Column - Chart and Stats */}
-          <div className="flex-1 space-y-4">
+          {/* Right Column - Chart */}
+          <div className="flex-1">
             {/* Daily Performance Chart */}
             <div>
               <h4 className="text-sm font-medium text-muted-foreground mb-3">
-                Daily Performance (%)
+                Daily Performance (USD)
               </h4>
-              <ChartContainer config={chartConfig} className="h-[160px] w-full">
+              <ChartContainer config={chartConfig} className="h-[240px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={chartData}>
                     <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
@@ -202,35 +154,6 @@ export function BotCard({
                   </BarChart>
                 </ResponsiveContainer>
               </ChartContainer>
-            </div>
-
-            {/* Stats Row */}
-            <div className="grid grid-cols-3 gap-3">
-              <div className="rounded-lg border bg-card p-3">
-                <div className="flex items-center gap-2 mb-1">
-                  <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-xs text-muted-foreground">Monthly</span>
-                </div>
-                <p className="text-lg font-semibold">
-                  {monthlyPerformance >= 0 ? "+" : ""}{monthlyPerformance.toFixed(1)}%
-                </p>
-              </div>
-
-              <div className="rounded-lg border bg-card p-3">
-                <div className="flex items-center gap-2 mb-1">
-                  <DollarSign className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-xs text-muted-foreground">Volume</span>
-                </div>
-                <p className="text-lg font-semibold">{formatNumber(totalVolume)}</p>
-              </div>
-
-              <div className="rounded-lg border bg-card p-3">
-                <div className="flex items-center gap-2 mb-1">
-                  <Users className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-xs text-muted-foreground">Users</span>
-                </div>
-                <p className="text-lg font-semibold">{userCount.toLocaleString()}</p>
-              </div>
             </div>
           </div>
         </div>
