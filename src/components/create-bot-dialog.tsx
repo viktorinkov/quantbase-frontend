@@ -269,7 +269,7 @@ export function CreateBotDialog({ onCreateBot }: CreateBotDialogProps) {
             Create New Trading Bot
           </DialogTitle>
           <DialogDescription>
-            Design and configure your custom SOL trading bot
+            Design and configure your custom trading bot
           </DialogDescription>
         </DialogHeader>
 
@@ -288,7 +288,7 @@ export function CreateBotDialog({ onCreateBot }: CreateBotDialogProps) {
           <Card>
             <CardContent className="space-y-4">
               <div>
-                <Label htmlFor="bot-name">Bot Name</Label>
+                <Label htmlFor="bot-name" className="mb-2 block">Bot Name</Label>
                 <Input
                   id="bot-name"
                   placeholder="e.g., My Custom SOL Trader"
@@ -297,7 +297,7 @@ export function CreateBotDialog({ onCreateBot }: CreateBotDialogProps) {
                 />
               </div>
               <div>
-                <Label htmlFor="bot-description">Description</Label>
+                <Label htmlFor="bot-description" className="mb-2 block">Description</Label>
                 <Textarea
                   id="bot-description"
                   placeholder="Describe your bot's strategy and approach..."
@@ -313,7 +313,7 @@ export function CreateBotDialog({ onCreateBot }: CreateBotDialogProps) {
           <Card>
             <CardContent className="space-y-4">
               <div>
-                <Label htmlFor="natural-input">Describe your trading preferences</Label>
+                <Label htmlFor="natural-input" className="mb-2 block">Describe your trading preferences</Label>
                 <Textarea
                   id="natural-input"
                   placeholder="e.g., 'I want a conservative strategy with tight stop losses and quick profits' or 'Make it more aggressive with larger positions'"
