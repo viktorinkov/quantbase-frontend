@@ -37,8 +37,8 @@ export default function Page() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // Filter for only trading models
-  const tradingBots = bots.filter(bot => bot.category === 'trading')
+  // Filter for only forecasting models
+  const forecastingBots = bots.filter(bot => bot.category === 'forecasting')
 
   useEffect(() => {
     async function fetchBots() {
@@ -121,9 +121,9 @@ export default function Page() {
               <div className="mb-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h1 className="text-3xl font-bold tracking-tight">📈 Model Marketplace</h1>
+                    <h1 className="text-3xl font-bold tracking-tight">🔮 Forecasting Models</h1>
                     <p className="text-muted-foreground mt-2">
-                      Discover and deploy automated trading models from top creators
+                      Advanced AI/ML models for price prediction and market forecasting
                     </p>
                   </div>
                   <CreateBotDialog onCreateBot={handleCreateBot} />
@@ -132,7 +132,7 @@ export default function Page() {
 
               {loading && (
                 <div className="text-center py-8 text-muted-foreground">
-                  Loading trading models...
+                  Loading forecasting models...
                 </div>
               )}
               {error && (
@@ -140,23 +140,23 @@ export default function Page() {
                   Error: {error}
                 </div>
               )}
-              {!loading && !error && tradingBots.length === 0 && (
+              {!loading && !error && forecastingBots.length === 0 && (
                 <div className="text-center py-8 text-muted-foreground">
-                  No trading models available
+                  No forecasting models available
                 </div>
               )}
 
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-lg font-semibold">Algorithmic Trading Models ({tradingBots.length})</h3>
+                    <h3 className="text-lg font-semibold">AI/ML Forecasting Models ({forecastingBots.length})</h3>
                     <p className="text-sm text-muted-foreground">
-                      Classic trading strategies with proven track records and systematic execution
+                      State-of-the-art machine learning models trained for cryptocurrency price prediction
                     </p>
                   </div>
                 </div>
                 <div className="grid gap-6">
-                  {tradingBots.map((bot, index) => (
+                  {forecastingBots.map((bot, index) => (
                     <BotCard
                       key={bot.id}
                       id={bot.id}

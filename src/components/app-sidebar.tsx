@@ -17,6 +17,7 @@ import {
   IconUsers,
   IconGraph,
   IconBuildingStore,
+  IconBrain,
 } from "@tabler/icons-react"
 
 import { NavDocuments } from "@/components/nav-documents"
@@ -49,6 +50,11 @@ const data = {
       title: "Model Marketplace",
       url: "/bot-marketplace",
       icon: IconBuildingStore,
+    },
+    {
+      title: "Forecasting Models",
+      url: "/forecasting-models",
+      icon: IconBrain,
     },
     {
       title: "Portfolio",
