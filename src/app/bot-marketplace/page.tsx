@@ -10,6 +10,7 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar"
 import type { Bot } from "@/contexts/selected-bot-context"
+import botsData from "@/data/bots.json"
 
 interface NewBot {
   id: string
@@ -36,44 +37,70 @@ export default function Page() {
   useEffect(() => {
     async function fetchBots() {
       try {
-        // Try to fetch bots from backend API first
-        const response = await fetch('/api/bots')
-        if (response.ok) {
-          const data = await response.json()
-
-          // If backend returns empty array or is not actually working, fallback to MongoDB
-          if (!Array.isArray(data) || data.length === 0) {
-            console.log('Backend returned empty bots, falling back to MongoDB models')
-            const staticResponse = await fetch('/api/models')
-            if (!staticResponse.ok) {
-              throw new Error('Failed to fetch models')
-            }
-            const staticData = await staticResponse.json()
-            setBots(staticData.models || [])
-          } else {
-            // Convert backend bot format to frontend format
-            const convertedBots: Bot[] = data.map((bot: any) => ({
-              id: bot.id,
-              name: bot.name,
-              modelName: bot.name, // Use name as modelName for now
-              image: bot.image, // Use bot's stored image
-              todaysTrades: bot.todaysTrades || [],
-              stats: bot.stats
-            }))
-            setBots(convertedBots)
-          }
-        } else {
-          // Fallback to static data if backend is not available
-          const staticResponse = await fetch('/api/models')
-          if (!staticResponse.ok) {
-            throw new Error('Failed to fetch models')
-          }
-          const staticData = await staticResponse.json()
-          setBots(staticData.models || [])
-        }
+        // Filter for trading models only from our static data
+        const tradingModels = botsData.filter(bot => bot.category === "trading")
+        
+        // Convert to Bot format
+        const convertedBots: Bot[] = tradingModels.map((bot: any) => ({
+          id: bot.id,
+          name: bot.name,
+          modelName: bot.modelName,
+          image: bot.image,
+          todaysTrades: bot.todaysTrades || [],
+          stats: {
+            updated_at: new Date().toISOString(),
+            hourly_pnl_usd: {
+              value: bot.monthlyPerformance / 30 / 24, // Convert monthly to hourly estimate
+              estimated: true,
+              basis: "Historical performance"
+            },
+            daily_pnl_usd: {
+              value: bot.monthlyPerformance / 30, // Convert monthly to daily estimate
+              estimated: true,
+              basis: "Historical performance"
+            },
+            trades_hourly: {
+              value: bot.totalTrades / 30 / 24, // Convert total to hourly estimate
+              estimated: true,
+              basis: "Historical data"
+            },
+            win_rate_daily: {
+              value: parseFloat(bot.accuracy.replace('%', '')) / 100, // Convert accuracy to decimal
+              estimated: true,
+              basis: "Model accuracy"
+            },
+            samples: {
+              ticks_lookback: 1000,
+              trips_total: bot.totalTrades,
+              trips_1h: Math.round(bot.totalTrades / 30 / 24),
+              trips_today: Math.round(bot.totalTrades / 30),
+              open_buys: 0
+            },
+            assumptions: {
+              trade_size_SOL: 0.1,
+              lookback_days_for_ticks: 30
+            },
+            // Additional fields for enhanced display
+            monthlyPerformance: bot.monthlyPerformance,
+            totalVolume: bot.totalVolume,
+            userCount: bot.userCount,
+            totalTrades: bot.totalTrades,
+            ranking: bot.ranking,
+            totalBots: bot.totalBots,
+            topPercentile: bot.topPercentile,
+            mape: bot.mape,
+            accuracy: bot.accuracy,
+            tags: bot.tags,
+            dailyPerformance: bot.dailyPerformance,
+            architecture: bot.architecture,
+            description: bot.description
+          } as any
+        }))
+        
+        setBots(convertedBots)
       } catch (err) {
-        console.error('Error fetching bots:', err)
-        setError(err instanceof Error ? err.message : 'Failed to load bots')
+        console.error('Error loading trading models:', err)
+        setError(err instanceof Error ? err.message : 'Failed to load trading models')
       } finally {
         setLoading(false)
       }
@@ -149,9 +176,9 @@ export default function Page() {
               <div className="mb-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Model Marketplace</h1>
+                    <h1 className="text-3xl font-bold tracking-tight">Trading Models Marketplace</h1>
                     <p className="text-muted-foreground mt-2">
-                      Discover and deploy automated trading bots from top creators
+                      Discover and deploy automated trading bots for live trading
                     </p>
                   </div>
                   <CreateBotDialog onCreateBot={handleCreateBot} />
