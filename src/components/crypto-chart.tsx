@@ -1,9 +1,10 @@
 "use client"
 
 import * as React from "react"
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts"
 
 import { useIsMobile } from "@/hooks/use-mobile"
+import { getCryptoColor } from "@/lib/crypto-colors"
 import {
   Card,
   CardAction,
@@ -41,7 +42,7 @@ interface CryptoChartProps {
 const chartConfig = {
   price: {
     label: "Price",
-    color: "var(--primary)",
+    color: "hsl(var(--primary))",
   },
 } satisfies ChartConfig
 
@@ -53,11 +54,14 @@ export function CryptoChart({
   chartData,
 }: CryptoChartProps) {
   const isMobile = useIsMobile()
-  const [timeRange, setTimeRange] = React.useState("90d")
+  const [timeRange, setTimeRange] = React.useState("1d")
+  
+  // Get crypto-specific color
+  const cryptoColor = getCryptoColor(symbol)
 
   React.useEffect(() => {
     if (isMobile) {
-      setTimeRange("7d")
+      setTimeRange("1d")
     }
   }, [isMobile])
 
@@ -81,6 +85,16 @@ export function CryptoChart({
     const startDate = new Date(referenceDate.getTime() - millisecondsToSubtract)
     return date >= startDate
   })
+
+  // Calculate Y-axis domain for better scaling
+  const prices = filteredData.map(item => item.price)
+  const minPrice = Math.min(...prices)
+  const maxPrice = Math.max(...prices)
+  const padding = (maxPrice - minPrice) * 0.1 // 10% padding
+  const yAxisDomain = [
+    Math.max(0, minPrice - padding),
+    maxPrice + padding
+  ]
 
   const priceChangeColor = priceChange24h >= 0 ? "text-green-600" : "text-red-600"
   const priceChangeSign = priceChange24h >= 0 ? "+" : ""
@@ -155,12 +169,12 @@ export function CryptoChart({
               <linearGradient id={`fill-${symbol}`} x1="0" y1="0" x2="0" y2="1">
                 <stop
                   offset="5%"
-                  stopColor="var(--color-price)"
-                  stopOpacity={1.0}
+                  stopColor={cryptoColor}
+                  stopOpacity={0.8}
                 />
                 <stop
                   offset="95%"
-                  stopColor="var(--color-price)"
+                  stopColor={cryptoColor}
                   stopOpacity={0.1}
                 />
               </linearGradient>
@@ -190,6 +204,21 @@ export function CryptoChart({
                   month: "short",
                   day: "numeric",
                 })
+              }}
+            />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              domain={yAxisDomain}
+              tickFormatter={(value) => {
+                if (value >= 1000) {
+                  return `$${(value / 1000).toFixed(1)}k`
+                } else if (value >= 1) {
+                  return `$${value.toFixed(0)}`
+                } else {
+                  return `$${value.toFixed(3)}`
+                }
               }}
             />
             <ChartTooltip
@@ -231,7 +260,8 @@ export function CryptoChart({
               dataKey="price"
               type="natural"
               fill={`url(#fill-${symbol})`}
-              stroke="var(--color-price)"
+              stroke={cryptoColor}
+              strokeWidth={2}
             />
           </AreaChart>
         </ChartContainer>
