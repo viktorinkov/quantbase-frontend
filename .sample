@@ -1,3 +1,4 @@
 # Replace <db_password> with your actual MongoDB password
 MONGODB_URI=URI
 MONGODB_DB=DATABASE_NAME
+NEXT_PUBLIC_BASE_URL=http://localhost:3000

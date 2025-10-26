@@ -25,10 +25,10 @@ async function makeBackendRequest(endpoint: string, options: RequestInit = {}) {
 // Get a specific bot
 export async function GET(
   request: NextRequest,
-  { params }: { params: { botId: string } }
+  { params }: { params: Promise<{ botId: string }> }
 ) {
   try {
-    const { botId } = params;
+    const { botId } = await params;
     
     const response = await makeBackendRequest(`/api/bots/${botId}`);
     
@@ -45,10 +45,10 @@ export async function GET(
 // Delete a bot
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { botId: string } }
+  { params }: { params: Promise<{ botId: string }> }
 ) {
   try {
-    const { botId } = params;
+    const { botId } = await params;
     
     const response = await makeBackendRequest(`/api/bots/${botId}`, {
       method: 'DELETE',

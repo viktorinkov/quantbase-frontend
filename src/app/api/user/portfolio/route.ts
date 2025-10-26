@@ -1,13 +1,8 @@
 import { MongoClient } from 'mongodb';
 import { NextRequest, NextResponse } from 'next/server';
 
-const uri = process.env.MONGODB_URI;
-
-if (!uri) {
-  throw new Error('MONGODB_URI is not defined in environment variables');
-}
-
-const client = new MongoClient(uri);
+const uri = process.env.MONGODB_URI || '';
+const client = uri ? new MongoClient(uri) : null;
 
 // Helper function to get the current model from active_models
 function getCurrentModel(activeModels: Record<string, string>): string | null {
@@ -29,6 +24,13 @@ function getCurrentModel(activeModels: Record<string, string>): string | null {
 
 export async function GET(request: NextRequest) {
   try {
+    if (!client) {
+      return NextResponse.json(
+        { error: 'Database connection not configured' },
+        { status: 500 }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const username = searchParams.get('username');
 
@@ -82,7 +84,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Fetch ticks from all collections and combine them
-    let allTicks = [];
+    let allTicks: any[] = [];
     for (const collectionName of allTicksCollections) {
       try {
         const collection = solanaDb.collection(collectionName);
@@ -191,7 +193,7 @@ export async function GET(request: NextRequest) {
     );
 
     // Use the portfolio_history from the user document if it exists
-    let performanceHistory = [];
+    let performanceHistory: any[] = [];
 
     if (user.portfolio_history && Array.isArray(user.portfolio_history)) {
       // User has portfolio_history stored as tuples [timestamp, usd_value, sol_value]
@@ -250,6 +252,8 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     );
   } finally {
-    await client.close();
+    if (client) {
+      await client.close();
+    }
   }
 }

@@ -48,6 +48,7 @@ interface BotTrade {
 
 interface BotTradesTableProps {
   trades?: BotTrade[]
+  compact?: boolean
 }
 
 const columns: ColumnDef<BotTrade>[] = [
