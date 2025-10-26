@@ -1,15 +1,26 @@
 [
   {
-    "id": "bot-1",
+    "id": "momentum",
     "name": "Momentum Master",
-    "image": "https://api.dicebear.com/7.x/shapes/svg?seed=bot1",
+    "image": "https://api.dicebear.com/7.x/shapes/svg?seed=momentum",
     "creator": {
-      "username": "alice_crypto",
-      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=alice"
+      "username": "quantbase_ai",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=quantbase"
     },
+    "modelName": "momentum",
+    "category": "trading",
+    "description": "📈 Classic Momentum Strategy • Trend Following • Price Action Analysis • Market Momentum Detection",
+    "architecture": "Algorithmic Trading Strategy",
     "monthlyPerformance": 18.5,
     "totalVolume": 2450000,
-    "userCount": 1247,
+    "userCount": 8247,
+    "totalTrades": 32051,
+    "ranking": 7,
+    "totalBots": 152,
+    "topPercentile": 95,
+    "mape": 28.5,
+    "accuracy": "71.5%",
+    "tags": ["Momentum", "Trend Following", "Classic Strategy", "Price Action"],
     "dailyPerformance": [
       { "date": "2025-10-18", "performance": 2.3 },
       { "date": "2025-10-19", "performance": -0.8 },
@@ -20,99 +31,34 @@
       { "date": "2025-10-24", "performance": 2.8 },
       { "date": "2025-10-25", "performance": 1.9 }
     ],
-    "topWinsToday": [
-      { "pair": "SOL/USDT", "profit": 4.2, "timestamp": "2025-10-25T09:15:00Z" },
-      { "pair": "SOL/USDT", "profit": 2.8, "timestamp": "2025-10-25T11:30:00Z" },
-      { "pair": "SOL/USDT", "profit": 1.5, "timestamp": "2025-10-25T14:45:00Z" }
+    "todaysTrades": [
+      { "action": "BUY", "price": 193.45, "timestamp": "2025-10-26T09:15:00Z" },
+      { "action": "SELL", "price": 194.12, "timestamp": "2025-10-26T11:30:00Z" },
+      { "action": "BUY", "price": 193.78, "timestamp": "2025-10-26T14:45:00Z" }
     ]
   },
   {
-    "id": "bot-2",
-    "name": "Grid Trader Pro",
-    "image": "https://api.dicebear.com/7.x/shapes/svg?seed=bot2",
-    "creator": {
-      "username": "bob_trader",
-      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=bob"
-    },
-    "monthlyPerformance": 12.3,
-    "totalVolume": 1850000,
-    "userCount": 892,
-    "dailyPerformance": [
-      { "date": "2025-10-18", "performance": 1.1 },
-      { "date": "2025-10-19", "performance": 0.9 },
-      { "date": "2025-10-20", "performance": -0.3 },
-      { "date": "2025-10-21", "performance": 1.7 },
-      { "date": "2025-10-22", "performance": 0.8 },
-      { "date": "2025-10-23", "performance": 1.2 },
-      { "date": "2025-10-24", "performance": 0.6 },
-      { "date": "2025-10-25", "performance": 1.4 }
-    ],
-    "topWinsToday": [
-      { "pair": "SOL/USDT", "profit": 2.1, "timestamp": "2025-10-25T08:20:00Z" },
-      { "pair": "SOL/USDT", "profit": 1.8, "timestamp": "2025-10-25T13:15:00Z" }
-    ]
-  },
-  {
-    "id": "bot-3",
-    "name": "DCA Accumulator",
-    "image": "https://api.dicebear.com/7.x/shapes/svg?seed=bot3",
-    "creator": {
-      "username": "charlie_invest",
-      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=charlie"
-    },
-    "monthlyPerformance": 8.7,
-    "totalVolume": 3200000,
-    "userCount": 2145,
-    "dailyPerformance": [
-      { "date": "2025-10-18", "performance": 0.7 },
-      { "date": "2025-10-19", "performance": 0.9 },
-      { "date": "2025-10-20", "performance": 0.5 },
-      { "date": "2025-10-21", "performance": 1.1 },
-      { "date": "2025-10-22", "performance": 0.8 },
-      { "date": "2025-10-23", "performance": 0.6 },
-      { "date": "2025-10-24", "performance": 0.9 },
-      { "date": "2025-10-25", "performance": 0.0 }
-    ],
-    "topWinsToday": []
-  },
-  {
-    "id": "bot-4",
-    "name": "Arbitrage Hunter",
-    "image": "https://api.dicebear.com/7.x/shapes/svg?seed=bot4",
-    "creator": {
-      "username": "diana_arb",
-      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=diana"
-    },
-    "monthlyPerformance": 22.1,
-    "totalVolume": 5600000,
-    "userCount": 534,
-    "dailyPerformance": [
-      { "date": "2025-10-18", "performance": 3.1 },
-      { "date": "2025-10-19", "performance": 2.4 },
-      { "date": "2025-10-20", "performance": -1.2 },
-      { "date": "2025-10-21", "performance": 4.5 },
-      { "date": "2025-10-22", "performance": 1.9 },
-      { "date": "2025-10-23", "performance": 2.7 },
-      { "date": "2025-10-24", "performance": 3.3 },
-      { "date": "2025-10-25", "performance": 2.6 }
-    ],
-    "topWinsToday": [
-      { "pair": "SOL/USDT", "profit": 3.5, "timestamp": "2025-10-25T10:05:00Z" },
-      { "pair": "SOL/USDT", "profit": 2.9, "timestamp": "2025-10-25T12:40:00Z" },
-      { "pair": "SOL/USDT", "profit": 2.2, "timestamp": "2025-10-25T15:20:00Z" }
-    ]
-  },
-  {
-    "id": "bot-5",
+    "id": "mean_reversion", 
     "name": "Mean Reversion AI",
-    "image": "https://api.dicebear.com/7.x/shapes/svg?seed=bot5",
+    "image": "https://api.dicebear.com/7.x/shapes/svg?seed=meanreversion",
     "creator": {
-      "username": "evan_quant",
-      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=evan"
+      "username": "quantbase_ai",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=quantbase"
     },
+    "modelName": "mean_reversion",
+    "category": "trading",
+    "description": "🔄 Mean Reversion Strategy • Statistical Arbitrage • Price Deviation Analysis • Market Correction Signals",
+    "architecture": "Statistical Trading Strategy", 
     "monthlyPerformance": 15.9,
     "totalVolume": 4100000,
-    "userCount": 1678,
+    "userCount": 12678,
+    "totalTrades": 47892,
+    "ranking": 5,
+    "totalBots": 152,
+    "topPercentile": 97,
+    "mape": 24.8,
+    "accuracy": "75.2%",
+    "tags": ["Mean Reversion", "Statistical Arbitrage", "Market Correction", "Deviation Analysis"],
     "dailyPerformance": [
       { "date": "2025-10-18", "performance": 1.8 },
       { "date": "2025-10-19", "performance": 1.2 },
@@ -123,35 +69,432 @@
       { "date": "2025-10-24", "performance": 0.7 },
       { "date": "2025-10-25", "performance": 2.3 }
     ],
-    "topWinsToday": [
-      { "pair": "SOL/USDT", "profit": 3.1, "timestamp": "2025-10-25T09:50:00Z" }
+    "todaysTrades": [
+      { "action": "BUY", "price": 193.31, "timestamp": "2025-10-26T09:50:00Z" },
+      { "action": "SELL", "price": 194.05, "timestamp": "2025-10-26T12:15:00Z" },
+      { "action": "BUY", "price": 193.67, "timestamp": "2025-10-26T15:20:00Z" }
     ]
   },
   {
-    "id": "bot-6",
-    "name": "Scalper Elite",
-    "image": "https://api.dicebear.com/7.x/shapes/svg?seed=bot6",
+    "id": "lightgbm-pro",
+    "name": "LightGBM Quantum Pro",
+    "image": "https://api.dicebear.com/7.x/shapes/svg?seed=lightgbm",
     "creator": {
-      "username": "fiona_scalp",
-      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=fiona"
+      "username": "quantbase_ai",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=quantbase"
     },
-    "monthlyPerformance": 26.4,
-    "totalVolume": 7800000,
-    "userCount": 423,
+    "modelName": "lightgbm_model",
+    "category": "forecasting",
+    "description": "🚀 GPU-Optimized Gradient Boosting • 500 Trees • 12-Layer Depth • 42-Day History Window",
+    "architecture": "Extreme Gradient Boosting",
+    "specs": {
+      "epochs": 500,
+      "trees": 500,
+      "max_depth": 12,
+      "learning_rate": 0.08,
+      "subsample": 0.9,
+      "colsample_bytree": 0.9,
+      "min_child_samples": 20,
+      "reg_alpha": 0.2,
+      "reg_lambda": 0.2,
+      "history_window": "42 days",
+      "features": "6 multivariate",
+      "training_time": "48s on Tesla T4"
+    },
+    "tags": ["Machine Learning", "Gradient Boosting", "High-Speed", "Multi-Feature"],
+    "monthlyPerformance": 24.7,
+    "totalVolume": 8500000,
+    "userCount": 18247,
+    "totalTrades": 65482,
+    "ranking": 3,
+    "totalBots": 152,
+    "topPercentile": 98,
+    "mape": 17.77,
+    "accuracy": "82.23%",
     "dailyPerformance": [
-      { "date": "2025-10-18", "performance": 3.8 },
-      { "date": "2025-10-19", "performance": 2.9 },
-      { "date": "2025-10-20", "performance": 4.1 },
-      { "date": "2025-10-21", "performance": -1.5 },
-      { "date": "2025-10-22", "performance": 3.2 },
+      { "date": "2025-10-18", "performance": 3.2 },
+      { "date": "2025-10-19", "performance": 2.1 },
+      { "date": "2025-10-20", "performance": 2.8 },
+      { "date": "2025-10-21", "performance": 4.1 },
+      { "date": "2025-10-22", "performance": 1.9 },
       { "date": "2025-10-23", "performance": 2.5 },
-      { "date": "2025-10-24", "performance": 4.7 },
-      { "date": "2025-10-25", "performance": 3.6 }
+      { "date": "2025-10-24", "performance": 3.7 },
+      { "date": "2025-10-25", "performance": 2.9 }
     ],
-    "topWinsToday": [
-      { "pair": "SOL/USDT", "profit": 5.2, "timestamp": "2025-10-25T08:45:00Z" },
-      { "pair": "SOL/USDT", "profit": 4.1, "timestamp": "2025-10-25T11:10:00Z" },
-      { "pair": "SOL/USDT", "profit": 3.7, "timestamp": "2025-10-25T14:25:00Z" }
+    "todaysTrades": [
+      { "action": "BUY", "price": 193.52, "timestamp": "2025-10-26T08:46:22Z" },
+      { "action": "BUY", "price": 193.49, "timestamp": "2025-10-26T08:27:19Z" },
+      { "action": "SELL", "price": 194.23, "timestamp": "2025-10-26T09:15:30Z" },
+      { "action": "BUY", "price": 193.45, "timestamp": "2025-10-26T10:22:15Z" }
+    ]
+  },
+  {
+    "id": "xgboost-elite",
+    "name": "XGBoost Alpha Elite",
+    "image": "https://api.dicebear.com/7.x/shapes/svg?seed=xgboost", 
+    "creator": {
+      "username": "quantbase_ai",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=quantbase"
+    },
+    "modelName": "xgboost_model",
+    "category": "forecasting",
+    "description": "🏆 Best MAPE: 13.35% • 400 Trees • Financial Data Optimized • Advanced Regularization",
+    "architecture": "Extreme Gradient Boosting",
+    "specs": {
+      "epochs": 400,
+      "trees": 400,
+      "max_depth": 10,
+      "learning_rate": 0.1,
+      "subsample": 0.9,
+      "colsample_bytree": 0.9,
+      "gamma": 0.2,
+      "min_child_weight": 3,
+      "reg_alpha": 0.2,
+      "reg_lambda": 0.2,
+      "history_window": "42 days",
+      "training_time": "4.3s",
+      "best_model": true
+    },
+    "tags": ["Champion Model", "XGBoost", "Financial-Optimized", "Fast Training"],
+    "monthlyPerformance": 31.2,
+    "totalVolume": 12400000,
+    "userCount": 24892,
+    "totalTrades": 89475,
+    "ranking": 1,
+    "totalBots": 152,
+    "topPercentile": 99,
+    "mape": 13.35,
+    "accuracy": "86.65%",
+    "dailyPerformance": [
+      { "date": "2025-10-18", "performance": 4.1 },
+      { "date": "2025-10-19", "performance": 3.5 },
+      { "date": "2025-10-20", "performance": 3.8 },
+      { "date": "2025-10-21", "performance": 5.2 },
+      { "date": "2025-10-22", "performance": 2.7 },
+      { "date": "2025-10-23", "performance": 3.9 },
+      { "date": "2025-10-24", "performance": 4.6 },
+      { "date": "2025-10-25", "performance": 4.2 }
+    ],
+    "todaysTrades": [
+      { "action": "BUY", "price": 193.47, "timestamp": "2025-10-26T08:35:12Z" },
+      { "action": "BUY", "price": 193.25, "timestamp": "2025-10-26T09:12:45Z" },
+      { "action": "SELL", "price": 194.15, "timestamp": "2025-10-26T09:48:33Z" },
+      { "action": "BUY", "price": 193.38, "timestamp": "2025-10-26T10:25:18Z" },
+      { "action": "SELL", "price": 194.05, "timestamp": "2025-10-26T11:02:55Z" }
+    ]
+  },
+  {
+    "id": "lstm-neural",
+    "name": "LSTM Neural Predictor",
+    "image": "https://api.dicebear.com/7.x/shapes/svg?seed=lstm",
+    "creator": {
+      "username": "quantbase_ai", 
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=quantbase"
+    },
+    "modelName": "lstm_model",
+    "category": "forecasting",
+    "description": "🧠 Deep Neural Network • 75 Epochs • 3 LSTM Layers • 256 Hidden Units • GPU-Trained",
+    "architecture": "Long Short-Term Memory RNN",
+    "specs": {
+      "epochs": 75,
+      "lstm_layers": 3,
+      "hidden_dim": 256,
+      "batch_size": 64,
+      "dropout": 0.2,
+      "optimizer": "Adam",
+      "learning_rate": 0.0005,
+      "weight_decay": 1e-5,
+      "gradient_clipping": 1.0,
+      "history_window": "24 days",
+      "gpu_optimized": true,
+      "training_time": "3.2min on Tesla T4"
+    },
+    "tags": ["Deep Learning", "LSTM", "Neural Network", "GPU-Optimized", "Sequential"],
+    "monthlyPerformance": 27.8,
+    "totalVolume": 9800000,
+    "userCount": 19156,
+    "totalTrades": 73824,
+    "ranking": 2,
+    "totalBots": 152,
+    "topPercentile": 99,
+    "mape": 18.42,
+    "accuracy": "81.58%",
+    "dailyPerformance": [
+      { "date": "2025-10-18", "performance": 3.5 },
+      { "date": "2025-10-19", "performance": 2.8 },
+      { "date": "2025-10-20", "performance": 3.2 },
+      { "date": "2025-10-21", "performance": 4.8 },
+      { "date": "2025-10-22", "performance": 2.1 },
+      { "date": "2025-10-23", "performance": 3.4 },
+      { "date": "2025-10-24", "performance": 4.2 },
+      { "date": "2025-10-25", "performance": 3.7 }
+    ],
+    "todaysTrades": [
+      { "action": "BUY", "price": 193.41, "timestamp": "2025-10-26T08:28:47Z" },
+      { "action": "BUY", "price": 193.22, "timestamp": "2025-10-26T09:05:33Z" },
+      { "action": "SELL", "price": 194.18, "timestamp": "2025-10-26T09:42:19Z" }
+    ]
+  },
+  {
+    "id": "nbeats-advanced",
+    "name": "N-BEATS Advanced AI",
+    "image": "https://api.dicebear.com/7.x/shapes/svg?seed=nbeats",
+    "creator": {
+      "username": "quantbase_ai",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=quantbase"
+    },
+    "modelName": "nbeats_model",
+    "category": "forecasting", 
+    "description": "🚀 N-BEATS Architecture • 50 Epochs • 4 Blocks • 256 Layer Width • Trend + Seasonality",
+    "architecture": "Neural Basis Expansion Analysis",
+    "specs": {
+      "epochs": 50,
+      "num_blocks": 4,
+      "num_layers": 2,
+      "layer_widths": 256,
+      "input_chunk_length": 24,
+      "output_chunk_length": 7,
+      "batch_size": 64,
+      "dropout": 0.1,
+      "gradient_clipping": 1.0,
+      "gpu_accelerated": true,
+      "architecture_type": "Generic + Interpretable",
+      "training_time": "2.2min on Tesla T4"
+    },
+    "tags": ["N-BEATS", "Time Series", "Interpretable AI", "Block Architecture", "Advanced"],
+    "monthlyPerformance": 25.3,
+    "totalVolume": 7650000,
+    "userCount": 15834,
+    "totalTrades": 58691,
+    "ranking": 4,
+    "totalBots": 152,
+    "topPercentile": 97,
+    "mape": 16.66,
+    "accuracy": "83.34%",
+    "dailyPerformance": [
+      { "date": "2025-10-18", "performance": 3.1 },
+      { "date": "2025-10-19", "performance": 2.6 },
+      { "date": "2025-10-20", "performance": 2.9 },
+      { "date": "2025-10-21", "performance": 4.3 },
+      { "date": "2025-10-22", "performance": 2.0 },
+      { "date": "2025-10-23", "performance": 3.1 },
+      { "date": "2025-10-24", "performance": 3.8 },
+      { "date": "2025-10-25", "performance": 3.3 }
+    ],
+    "todaysTrades": [
+      { "action": "BUY", "price": 193.35, "timestamp": "2025-10-26T08:33:21Z" },
+      { "action": "SELL", "price": 194.12, "timestamp": "2025-10-26T09:18:44Z" },
+      { "action": "BUY", "price": 193.28, "timestamp": "2025-10-26T10:07:16Z" }
+    ]
+  },
+  {
+    "id": "tide-transformer",
+    "name": "TiDE Transformer Pro",
+    "image": "https://api.dicebear.com/7.x/shapes/svg?seed=tide",
+    "creator": {
+      "username": "quantbase_ai",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=quantbase"
+    },
+    "modelName": "tide_transformer_model",
+    "category": "forecasting",
+    "description": "🔮 Transformer Architecture • 50 Epochs • 4 Encoder/Decoder Layers • 512 Hidden Size",
+    "architecture": "Time Series Dense Encoder-Decoder",
+    "specs": {
+      "epochs": 50,
+      "num_encoder_layers": 4,
+      "num_decoder_layers": 4,
+      "hidden_size": 512,
+      "decoder_output_dim": 32,
+      "temporal_width_past": 4,
+      "temporal_width_future": 2,
+      "temporal_decoder_hidden": 32,
+      "batch_size": 32,
+      "dropout": 0.1,
+      "use_layer_norm": true,
+      "gradient_clipping": 1.0,
+      "training_time": "2.8min on Tesla T4"
+    },
+    "tags": ["Transformer", "Encoder-Decoder", "Temporal", "Advanced AI", "State-of-Art"],
+    "monthlyPerformance": 23.6,
+    "totalVolume": 6890000,
+    "userCount": 11245,
+    "totalTrades": 45327,
+    "ranking": 6,
+    "totalBots": 152,
+    "topPercentile": 96,
+    "mape": 19.12,
+    "accuracy": "80.88%",
+    "dailyPerformance": [
+      { "date": "2025-10-18", "performance": 2.8 },
+      { "date": "2025-10-19", "performance": 2.3 },
+      { "date": "2025-10-20", "performance": 2.7 },
+      { "date": "2025-10-21", "performance": 3.9 },
+      { "date": "2025-10-22", "performance": 1.8 },
+      { "date": "2025-10-23", "performance": 2.9 },
+      { "date": "2025-10-24", "performance": 3.5 },
+      { "date": "2025-10-25", "performance": 3.1 }
+    ],
+    "todaysTrades": [
+      { "action": "BUY", "price": 193.39, "timestamp": "2025-10-26T08:41:55Z" },
+      { "action": "BUY", "price": 193.18, "timestamp": "2025-10-26T09:23:12Z" },
+      { "action": "SELL", "price": 194.08, "timestamp": "2025-10-26T10:14:38Z" }
+    ]
+  },
+  {
+    "id": "tft-fusion",
+    "name": "TFT Fusion Engine",
+    "image": "https://api.dicebear.com/7.x/shapes/svg?seed=tft",
+    "creator": {
+      "username": "quantbase_ai",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=quantbase"
+    },
+    "modelName": "tft_model",
+    "category": "forecasting",
+    "description": "🌟 Temporal Fusion • 75 Epochs • 2 LSTM Layers • 4 Attention Heads • Multi-Horizon",
+    "architecture": "Temporal Fusion Transformer",
+    "specs": {
+      "epochs": 75,
+      "hidden_size": 128,
+      "lstm_layers": 2,
+      "num_attention_heads": 4,
+      "input_chunk_length": 24,
+      "output_chunk_length": 7,
+      "batch_size": 32,
+      "dropout": 0.1,
+      "add_relative_index": true,
+      "gradient_clipping": 1.0,
+      "multi_horizon": true,
+      "attention_mechanism": "Multi-head Self-attention",
+      "training_time": "3.3min on Tesla T4"
+    },
+    "tags": ["TFT", "Attention", "Multi-Horizon", "LSTM-Transformer", "Fusion"],
+    "monthlyPerformance": 21.4,
+    "totalVolume": 5420000,
+    "userCount": 9987,
+    "totalTrades": 38654,
+    "ranking": 8,
+    "totalBots": 152,
+    "topPercentile": 95,
+    "mape": 22.18,
+    "accuracy": "77.82%",
+    "dailyPerformance": [
+      { "date": "2025-10-18", "performance": 2.5 },
+      { "date": "2025-10-19", "performance": 1.9 },
+      { "date": "2025-10-20", "performance": 2.3 },
+      { "date": "2025-10-21", "performance": 3.2 },
+      { "date": "2025-10-22", "performance": 1.6 },
+      { "date": "2025-10-23", "performance": 2.4 },
+      { "date": "2025-10-24", "performance": 2.8 },
+      { "date": "2025-10-25", "performance": 2.6 }
+    ],
+    "todaysTrades": [
+      { "action": "BUY", "price": 193.43, "timestamp": "2025-10-26T08:52:33Z" },
+      { "action": "SELL", "price": 194.05, "timestamp": "2025-10-26T09:37:19Z" }
+    ]
+  },
+  {
+    "id": "random-forest",
+    "name": "Random Forest Ensemble",
+    "image": "https://api.dicebear.com/7.x/shapes/svg?seed=forest",
+    "creator": {
+      "username": "quantbase_ai",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=quantbase"
+    },
+    "modelName": "random_forest_model",
+    "category": "forecasting",
+    "description": "🌲 Ensemble Learning • 150 Trees • 15-Layer Depth • Multi-Feature • Bootstrap Aggregation",
+    "architecture": "Random Forest Ensemble",
+    "specs": {
+      "n_estimators": 150,
+      "max_depth": 15,
+      "min_samples_split": 5,
+      "min_samples_leaf": 3,
+      "max_features": "sqrt",
+      "bootstrap": true,
+      "random_state": 42,
+      "lags": 21,
+      "output_chunk_length": 7,
+      "multivariate_features": 6,
+      "training_time": "1.8s",
+      "ensemble_voting": "soft"
+    },
+    "tags": ["Ensemble", "Random Forest", "Bootstrap", "Multi-Tree", "Fast"],
+    "monthlyPerformance": 19.7,
+    "totalVolume": 4580000,
+    "userCount": 13456,
+    "totalTrades": 41892,
+    "ranking": 9,
+    "totalBots": 152,
+    "topPercentile": 94,
+    "mape": 23.04,
+    "accuracy": "76.96%",
+    "dailyPerformance": [
+      { "date": "2025-10-18", "performance": 2.2 },
+      { "date": "2025-10-19", "performance": 1.7 },
+      { "date": "2025-10-20", "performance": 2.1 },
+      { "date": "2025-10-21", "performance": 2.9 },
+      { "date": "2025-10-22", "performance": 1.4 },
+      { "date": "2025-10-23", "performance": 2.0 },
+      { "date": "2025-10-24", "performance": 2.5 },
+      { "date": "2025-10-25", "performance": 2.3 }
+    ],
+    "todaysTrades": [
+      { "action": "BUY", "price": 193.46, "timestamp": "2025-10-26T08:44:17Z" },
+      { "action": "BUY", "price": 193.31, "timestamp": "2025-10-26T09:26:54Z" },
+      { "action": "SELL", "price": 194.02, "timestamp": "2025-10-26T10:08:41Z" },
+      { "action": "BUY", "price": 193.27, "timestamp": "2025-10-26T10:51:28Z" }
+    ]
+  },
+  {
+    "id": "exponential-smooth",
+    "name": "Exponential Smoothing Pro",
+    "image": "https://api.dicebear.com/7.x/shapes/svg?seed=exponential",
+    "creator": {
+      "username": "quantbase_ai",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=quantbase"
+    },
+    "modelName": "exponential_smoothing_model",
+    "category": "forecasting",
+    "description": "📈 Statistical Model • Enhanced Trend Detection • Seasonality Analysis • Robust Baseline",
+    "architecture": "Exponential Smoothing with Trend",
+    "specs": {
+      "method": "Holt-Winters",
+      "trend": "additive",
+      "seasonal": "additive",
+      "seasonal_periods": 7,
+      "smoothing_level": 0.3,
+      "smoothing_trend": 0.1,
+      "smoothing_seasonal": 0.1,
+      "damped_trend": false,
+      "initialization_method": "estimated",
+      "use_boxcox": false,
+      "training_time": "0.5s",
+      "statistical_foundation": "Classical Time Series"
+    },
+    "tags": ["Statistical", "Exponential Smoothing", "Trend Analysis", "Seasonal", "Baseline"],
+    "monthlyPerformance": 16.2,
+    "totalVolume": 3240000,
+    "userCount": 7892,
+    "totalTrades": 29483,
+    "ranking": 12,
+    "totalBots": 152,
+    "topPercentile": 92,
+    "mape": 25.67,
+    "accuracy": "74.33%",
+    "dailyPerformance": [
+      { "date": "2025-10-18", "performance": 1.8 },
+      { "date": "2025-10-19", "performance": 1.3 },
+      { "date": "2025-10-20", "performance": 1.6 },
+      { "date": "2025-10-21", "performance": 2.2 },
+      { "date": "2025-10-22", "performance": 1.1 },
+      { "date": "2025-10-23", "performance": 1.5 },
+      { "date": "2025-10-24", "performance": 1.9 },
+      { "date": "2025-10-25", "performance": 1.7 }
+    ],
+    "todaysTrades": [
+      { "action": "BUY", "price": 193.51, "timestamp": "2025-10-26T08:58:42Z" },
+      { "action": "SELL", "price": 193.98, "timestamp": "2025-10-26T09:41:29Z" },
+      { "action": "BUY", "price": 193.33, "timestamp": "2025-10-26T10:24:16Z" }
     ]
   }
 ]
