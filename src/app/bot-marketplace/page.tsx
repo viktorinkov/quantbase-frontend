@@ -78,8 +78,8 @@ export default function Page() {
                     id={bot.id}
                     name={bot.name}
                     modelName={bot.modelName}
-                    dailyPerformance={bot.dailyPerformance}
-                    todaysTradesToday={bot.todaysTradesToday}
+                    todaysTrades={bot.todaysTrades}
+                    todaysPL={bot.todaysPL}
                   />
                 ))}
               </div>

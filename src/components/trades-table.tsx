@@ -57,14 +57,13 @@ import {
 } from "@/components/ui/tabs"
 
 export const schema = z.object({
-  id: z.number(),
-  date: z.string(),
-  time: z.string(),
-  cryptocurrency: z.string(),
-  type: z.string(),
-  amount: z.string(),
-  price: z.string(),
-  total: z.string(),
+  id: z.string(),
+  timestamp: z.string(),
+  action: z.string(),
+  amount: z.number(),
+  price_usd: z.number(),
+  wallet_balance_sol: z.number(),
+  profit_loss_usd: z.number(),
 })
 
 const columns: ColumnDef<z.infer<typeof schema>>[] = [

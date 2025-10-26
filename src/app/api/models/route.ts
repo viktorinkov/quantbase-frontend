@@ -1,11 +1,13 @@
 import { NextResponse } from 'next/server';
 import clientPromise from '@/lib/mongodb';
 
-interface Trade {
+interface Tick {
+  _id: string;
   timestamp: string;
   price_usd: number;
   action: string;
-  profit_loss_usd: number;
+  wallet_balance_sol?: number;
+  profit_loss_usd?: number;
 }
 
 export async function GET() {
@@ -19,7 +21,7 @@ export async function GET() {
     const botsCollection = botsDb.collection('bots');
     const bots = await botsCollection.find({}).toArray();
 
-    // Get today's start time (midnight UTC)
+    // Get today's start time (midnight UTC) - MongoDB best practice: use Date object, not ISO string
     const todayStart = new Date();
     todayStart.setUTCHours(0, 0, 0, 0);
 
@@ -36,58 +38,40 @@ export async function GET() {
           .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
           .join(' ');
 
-        // Fetch today's trades from the referenced ticks collection
+        // Fetch all of today's ticks from the referenced ticks collection
+        // MongoDB stores dates as ISODate objects - query with Date object, not string
         const ticksCollection = solanaDb.collection(ticksRef);
-        const todayTradesRaw = await ticksCollection
+        const todayTicksRaw = await ticksCollection
           .find({
-            timestamp: { $gte: todayStart.toISOString() },
-            action: { $in: ['BUY', 'SELL'] } // Only actual trades, not WARMUP
+            timestamp: { $gte: todayStart }
           })
-          .sort({ profit_loss_usd: -1 }) // Sort by profit descending
-          .limit(3)
+          .sort({ timestamp: -1 }) // Sort by most recent first
           .toArray();
 
-        const todayTrades = todayTradesRaw as unknown as Trade[];
+        const todayTicks = todayTicksRaw as unknown as Tick[];
 
         // Calculate daily performance for the last 7 days
         const sevenDaysAgo = new Date();
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-        const recentTradesRaw = await ticksCollection
-          .find({
-            timestamp: { $gte: sevenDaysAgo.toISOString() }
-          })
-          .sort({ timestamp: 1 })
-          .toArray();
-
-        const recentTrades = recentTradesRaw as unknown as Trade[];
-
-        // Group trades by day and calculate daily performance
-        const dailyPerformanceMap = new Map<string, number>();
-        recentTrades.forEach((trade) => {
-          const date = new Date(trade.timestamp).toISOString().split('T')[0];
-          const currentProfit = dailyPerformanceMap.get(date) || 0;
-          dailyPerformanceMap.set(date, currentProfit + trade.profit_loss_usd);
-        });
-
-        const dailyPerformance = Array.from(dailyPerformanceMap.entries()).map(([date, profit]) => ({
-          date,
-          performance: profit
+        // Format today's ticks for display
+        const todaysTradesFormatted = todayTicks.map((tick) => ({
+          action: tick.action,
+          price: tick.price_usd,
+          timestamp: tick.timestamp,
+          walletBalance: tick.wallet_balance_sol || 0,
+          profitLoss: tick.profit_loss_usd || 0
         }));
 
-        // Format today's trades
-        const todaysTradesFormatted = todayTrades.map((trade) => ({
-          pair: 'SOL/USD', // Based on the data structure showing price_usd
-          profit: trade.profit_loss_usd,
-          timestamp: trade.timestamp
-        }));
+        // Calculate today's total P/L
+        const todaysPL = todayTicks.reduce((sum, tick) => sum + (tick.profit_loss_usd || 0), 0);
 
         return {
           id: bot._id.toString(),
           name: displayName,
           modelName: modelName,
-          dailyPerformance,
-          todaysTradesToday: todaysTradesFormatted
+          todaysTrades: todaysTradesFormatted,
+          todaysPL: todaysPL
         };
       })
     );

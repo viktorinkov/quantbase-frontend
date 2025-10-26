@@ -1,7 +1,6 @@
 "use client"
 
 import { AppSidebar } from "@/components/app-sidebar"
-import { TradesTable } from "@/components/trades-table"
 import { PortfolioBalances } from "@/components/portfolio-balances"
 import { SelectedBotInfo } from "@/components/selected-bot-info"
 import { SiteHeader } from "@/components/site-header"
@@ -13,22 +12,6 @@ import { usePortfolio } from "@/hooks/use-portfolio"
 
 export default function Page() {
   const { portfolio, isLoading, error } = usePortfolio()
-
-  // Transform trades data
-  const trades = portfolio?.trades.map((trade, index) => {
-    const amount = trade.amount || 0
-    const priceUsd = trade.price_usd || 0
-    return {
-      id: index + 1, // Use index as numeric ID
-      date: new Date(trade.timestamp).toLocaleDateString(),
-      time: new Date(trade.timestamp).toLocaleTimeString(),
-      cryptocurrency: `Solana (SOL)`,
-      type: trade.action === 'BUY' ? 'Buy' : trade.action === 'SELL' ? 'Sell' : 'Hold',
-      amount: amount.toFixed(4),
-      price: priceUsd.toFixed(2),
-      total: (amount * priceUsd).toFixed(2),
-    }
-  }) || []
 
   return (
     <SidebarProvider
@@ -55,10 +38,7 @@ export default function Page() {
                   Error loading portfolio: {error}
                 </div>
               ) : (
-                <>
-                  <PortfolioBalances balances={portfolio?.balances} />
-                  <TradesTable data={trades} />
-                </>
+                <PortfolioBalances balances={portfolio?.balances} />
               )}
             </div>
           </div>
