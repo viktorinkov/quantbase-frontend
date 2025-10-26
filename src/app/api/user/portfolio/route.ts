@@ -135,32 +135,26 @@ export async function GET(request: NextRequest) {
       0
     );
 
-    // Calculate performance history (daily portfolio value over time)
-    // Group ticks by day and store timestamp, USD value, and SOL value
-    const performanceHistoryMap = new Map<string, { timestamp: string; usd: number; sol: number }>();
+    // Use the portfolio_history from the user document if it exists
+    let performanceHistory = [];
 
-    ticks.forEach((tick) => {
-      const date = new Date(tick.timestamp).toISOString().split('T')[0];
-      const timestamp = tick.timestamp;
-      const walletBalanceUsd = (tick.wallet_balance_usd || 0);
-      const walletBalanceSol = (tick.wallet_balance_sol || 0);
-
-      // Keep only the latest value for each day
-      performanceHistoryMap.set(date, {
-        timestamp,
-        usd: walletBalanceUsd,
-        sol: walletBalanceSol,
-      });
-    });
-
-    // Convert to array format for the chart
-    const performanceHistory = Array.from(performanceHistoryMap.entries())
-      .map(([_, data]) => [
-        data.timestamp,
-        data.usd,
-        data.sol,
-      ])
-      .sort((a, b) => new Date(a[0]).getTime() - new Date(b[0]).getTime());
+    if (user.portfolio_history && Array.isArray(user.portfolio_history)) {
+      // User has portfolio_history stored as tuples [timestamp, usd_value, sol_value]
+      performanceHistory = user.portfolio_history
+        .map((entry: any[]) => {
+          // Convert MongoDB Date objects to ISO strings for JSON serialization
+          if (entry && Array.isArray(entry) && entry.length >= 3) {
+            return [
+              entry[0] instanceof Date ? entry[0].toISOString() : entry[0],
+              entry[1],
+              entry[2]
+            ];
+          }
+          return null;
+        })
+        .filter((entry: any) => entry !== null)
+        .sort((a: any, b: any) => new Date(a[0]).getTime() - new Date(b[0]).getTime());
+    }
 
     return NextResponse.json({
       success: true,
