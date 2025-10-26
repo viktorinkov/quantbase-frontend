@@ -120,7 +120,7 @@ export default function Page() {
               <div className="mb-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Bot Marketplace</h1>
+                    <h1 className="text-3xl font-bold tracking-tight">Model Marketplace</h1>
                     <p className="text-muted-foreground mt-2">
                       Discover and deploy automated trading bots from top creators
                     </p>
