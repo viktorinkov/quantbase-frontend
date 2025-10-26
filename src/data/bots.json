@@ -8,6 +8,7 @@
       "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=quantbase"
     },
     "modelName": "momentum",
+    "category": "trading",
     "description": "📈 Classic Momentum Strategy • Trend Following • Price Action Analysis • Market Momentum Detection",
     "architecture": "Algorithmic Trading Strategy",
     "monthlyPerformance": 18.5,
@@ -45,6 +46,7 @@
       "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=quantbase"
     },
     "modelName": "mean_reversion",
+    "category": "trading",
     "description": "🔄 Mean Reversion Strategy • Statistical Arbitrage • Price Deviation Analysis • Market Correction Signals",
     "architecture": "Statistical Trading Strategy", 
     "monthlyPerformance": 15.9,
@@ -82,6 +84,7 @@
       "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=quantbase"
     },
     "modelName": "lightgbm_model",
+    "category": "forecasting",
     "description": "🚀 GPU-Optimized Gradient Boosting • 500 Trees • 12-Layer Depth • 42-Day History Window",
     "architecture": "Extreme Gradient Boosting",
     "specs": {
@@ -134,6 +137,7 @@
       "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=quantbase"
     },
     "modelName": "xgboost_model",
+    "category": "forecasting",
     "description": "🏆 Best MAPE: 13.35% • 400 Trees • Financial Data Optimized • Advanced Regularization",
     "architecture": "Extreme Gradient Boosting",
     "specs": {
@@ -188,6 +192,7 @@
       "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=quantbase"
     },
     "modelName": "lstm_model",
+    "category": "forecasting",
     "description": "🧠 Deep Neural Network • 75 Epochs • 3 LSTM Layers • 256 Hidden Units • GPU-Trained",
     "architecture": "Long Short-Term Memory RNN",
     "specs": {
@@ -238,7 +243,8 @@
       "username": "quantbase_ai",
       "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=quantbase"
     },
-    "modelName": "nbeats_model", 
+    "modelName": "nbeats_model",
+    "category": "forecasting", 
     "description": "🚀 N-BEATS Architecture • 50 Epochs • 4 Blocks • 256 Layer Width • Trend + Seasonality",
     "architecture": "Neural Basis Expansion Analysis",
     "specs": {
@@ -290,6 +296,7 @@
       "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=quantbase"
     },
     "modelName": "tide_transformer_model",
+    "category": "forecasting",
     "description": "🔮 Transformer Architecture • 50 Epochs • 4 Encoder/Decoder Layers • 512 Hidden Size",
     "architecture": "Time Series Dense Encoder-Decoder",
     "specs": {
@@ -342,6 +349,7 @@
       "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=quantbase"
     },
     "modelName": "tft_model",
+    "category": "forecasting",
     "description": "🌟 Temporal Fusion • 75 Epochs • 2 LSTM Layers • 4 Attention Heads • Multi-Horizon",
     "architecture": "Temporal Fusion Transformer",
     "specs": {
@@ -393,6 +401,7 @@
       "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=quantbase"
     },
     "modelName": "random_forest_model",
+    "category": "forecasting",
     "description": "🌲 Ensemble Learning • 150 Trees • 15-Layer Depth • Multi-Feature • Bootstrap Aggregation",
     "architecture": "Random Forest Ensemble",
     "specs": {
@@ -445,6 +454,7 @@
       "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=quantbase"
     },
     "modelName": "exponential_smoothing_model",
+    "category": "forecasting",
     "description": "📈 Statistical Model • Enhanced Trend Detection • Seasonality Analysis • Robust Baseline",
     "architecture": "Exponential Smoothing with Trend",
     "specs": {

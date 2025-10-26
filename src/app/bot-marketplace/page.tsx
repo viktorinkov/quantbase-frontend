@@ -9,6 +9,7 @@ import {
   SidebarInset,
   SidebarProvider,
 } from "@/components/ui/sidebar"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { Bot } from "@/contexts/selected-bot-context"
 
 interface NewBot {
@@ -36,6 +37,10 @@ export default function Page() {
   const [bots, setBots] = useState<Bot[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  // Filter bots by category
+  const tradingBots = bots.filter(bot => bot.category === 'trading')
+  const forecastingBots = bots.filter(bot => bot.category === 'forecasting')
 
   useEffect(() => {
     async function fetchBots() {
@@ -115,17 +120,18 @@ export default function Page() {
         <div className="flex flex-1 flex-col">
           <div className="@container/main flex flex-1 flex-col gap-2">
             <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6 px-4 lg:px-6">
-              <div className="mb-4">
+              <div className="mb-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Bot Marketplace</h1>
+                    <h1 className="text-3xl font-bold tracking-tight">Model Marketplace</h1>
                     <p className="text-muted-foreground mt-2">
-                      Discover and deploy automated trading bots from top creators
+                      Discover and deploy automated models from top creators
                     </p>
                   </div>
                   <CreateBotDialog onCreateBot={handleCreateBot} />
                 </div>
               </div>
+
               {loading && (
                 <div className="text-center py-8 text-muted-foreground">
                   Loading models...
@@ -141,30 +147,101 @@ export default function Page() {
                   No models available
                 </div>
               )}
-              <div className="grid gap-6">
-                {bots.map((bot, index) => (
-                  <BotCard
-                    key={bot.id}
-                    id={bot.id}
-                    name={bot.name}
-                    modelName={bot.modelName}
-                    description={bot.description}
-                    architecture={bot.architecture}
-                    monthlyPerformance={bot.monthlyPerformance}
-                    accuracy={bot.accuracy}
-                    mape={bot.mape}
-                    tags={bot.tags}
-                    userCount={bot.userCount}
-                    totalTrades={bot.totalTrades}
-                    ranking={bot.ranking}
-                    totalBots={bot.totalBots}
-                    topPercentile={bot.topPercentile}
-                    todaysTrades={bot.todaysTrades}
-                    stats={bot.stats}
-                    index={index}
-                  />
-                ))}
-              </div>
+
+              {!loading && !error && bots.length > 0 && (
+                <Tabs defaultValue="forecasting" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="forecasting" className="flex items-center gap-2">
+                      <span>🔮</span>
+                      Forecasting Models
+                      <span className="ml-1 text-xs bg-primary/20 text-primary px-2 py-1 rounded-full">
+                        {forecastingBots.length}
+                      </span>
+                    </TabsTrigger>
+                    <TabsTrigger value="trading" className="flex items-center gap-2">
+                      <span>📈</span>
+                      Trading Models
+                      <span className="ml-1 text-xs bg-primary/20 text-primary px-2 py-1 rounded-full">
+                        {tradingBots.length}
+                      </span>
+                    </TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="forecasting" className="mt-6">
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="text-lg font-semibold">AI/ML Forecasting Models</h3>
+                          <p className="text-sm text-muted-foreground">
+                            Advanced machine learning models for price prediction and market forecasting
+                          </p>
+                        </div>
+                      </div>
+                      <div className="grid gap-6">
+                        {forecastingBots.map((bot, index) => (
+                          <BotCard
+                            key={bot.id}
+                            id={bot.id}
+                            name={bot.name}
+                            modelName={bot.modelName}
+                            description={bot.description}
+                            architecture={bot.architecture}
+                            monthlyPerformance={bot.monthlyPerformance}
+                            accuracy={bot.accuracy}
+                            mape={bot.mape}
+                            tags={bot.tags}
+                            userCount={bot.userCount}
+                            totalTrades={bot.totalTrades}
+                            ranking={bot.ranking}
+                            totalBots={bot.totalBots}
+                            topPercentile={bot.topPercentile}
+                            todaysTrades={bot.todaysTrades}
+                            stats={bot.stats}
+                            index={index}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="trading" className="mt-6">
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="text-lg font-semibold">Algorithmic Trading Models</h3>
+                          <p className="text-sm text-muted-foreground">
+                            Classic trading strategies with proven track records and systematic execution
+                          </p>
+                        </div>
+                      </div>
+                      <div className="grid gap-6">
+                        {tradingBots.map((bot, index) => (
+                          <BotCard
+                            key={bot.id}
+                            id={bot.id}
+                            name={bot.name}
+                            modelName={bot.modelName}
+                            description={bot.description}
+                            architecture={bot.architecture}
+                            monthlyPerformance={bot.monthlyPerformance}
+                            accuracy={bot.accuracy}
+                            mape={bot.mape}
+                            tags={bot.tags}
+                            userCount={bot.userCount}
+                            totalTrades={bot.totalTrades}
+                            ranking={bot.ranking}
+                            totalBots={bot.totalBots}
+                            topPercentile={bot.topPercentile}
+                            todaysTrades={bot.todaysTrades}
+                            stats={bot.stats}
+                            index={index}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </TabsContent>
+                </Tabs>
+              )}
             </div>
           </div>
         </div>

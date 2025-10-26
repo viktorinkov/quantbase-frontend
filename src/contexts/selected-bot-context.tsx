@@ -47,6 +47,7 @@ export interface Bot {
   id: string
   name: string
   modelName: string
+  category?: string
   description?: string
   architecture?: string
   monthlyPerformance?: number
