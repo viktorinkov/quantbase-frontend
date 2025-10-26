@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { X } from "lucide-react"
 import { useSelectedBot } from "@/contexts/selected-bot-context"
+import { BotParameterCustomizer } from "@/components/bot-parameter-customizer"
 
 export function SelectedBotInfo() {
   const { selectedBot, deselectBot, isLoading } = useSelectedBot()
@@ -88,6 +89,18 @@ export function SelectedBotInfo() {
                   {totalProfit >= 0 ? "+" : ""}${totalProfit.toFixed(2)}
                 </p>
               </div>
+            </div>
+
+            {/* Bot Parameter Customizer */}
+            <div className="pt-4">
+              <BotParameterCustomizer
+                botId={selectedBot.id}
+                botName={selectedBot.name}
+                onParametersChange={(parameters) => {
+                  console.log('Bot parameters updated:', parameters)
+                  // TODO: Update bot parameters in context/state
+                }}
+              />
             </div>
           </div>
         </CardContent>

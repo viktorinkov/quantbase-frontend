@@ -1,0 +1,222 @@
+[
+  {
+    "id": 1,
+    "date": "2024-09-28",
+    "time": "14:32:15",
+    "cryptocurrency": "Bitcoin (BTC)",
+    "type": "Buy",
+    "amount": "0.5",
+    "price": "72123.12",
+    "total": "36061.56",
+    "fee": "36.06"
+  },
+  {
+    "id": 2,
+    "date": "2024-09-27",
+    "time": "10:15:42",
+    "cryptocurrency": "Ethereum (ETH)",
+    "type": "Buy",
+    "amount": "5.0",
+    "price": "2934.78",
+    "total": "14673.90",
+    "fee": "14.67"
+  },
+  {
+    "id": 3,
+    "date": "2024-09-25",
+    "time": "16:48:20",
+    "cryptocurrency": "Solana (SOL)",
+    "type": "Buy",
+    "amount": "25.0",
+    "price": "192.45",
+    "total": "4811.25",
+    "fee": "4.81"
+  },
+  {
+    "id": 4,
+    "date": "2024-09-24",
+    "time": "09:21:33",
+    "cryptocurrency": "Bitcoin (BTC)",
+    "type": "Sell",
+    "amount": "0.25",
+    "price": "71234.56",
+    "total": "17808.64",
+    "fee": "17.81"
+  },
+  {
+    "id": 5,
+    "date": "2024-09-22",
+    "time": "13:55:17",
+    "cryptocurrency": "Cardano (ADA)",
+    "type": "Buy",
+    "amount": "1000.0",
+    "price": "0.3801",
+    "total": "380.10",
+    "fee": "0.38"
+  },
+  {
+    "id": 6,
+    "date": "2024-09-20",
+    "time": "11:37:29",
+    "cryptocurrency": "Ethereum (ETH)",
+    "type": "Sell",
+    "amount": "2.5",
+    "price": "2934.67",
+    "total": "7336.68",
+    "fee": "7.34"
+  },
+  {
+    "id": 7,
+    "date": "2024-09-18",
+    "time": "15:12:45",
+    "cryptocurrency": "Solana (SOL)",
+    "type": "Buy",
+    "amount": "15.0",
+    "price": "192.12",
+    "total": "2881.80",
+    "fee": "2.88"
+  },
+  {
+    "id": 8,
+    "date": "2024-09-15",
+    "time": "08:44:52",
+    "cryptocurrency": "Bitcoin (BTC)",
+    "type": "Buy",
+    "amount": "0.75",
+    "price": "70123.45",
+    "total": "52592.59",
+    "fee": "52.59"
+  },
+  {
+    "id": 9,
+    "date": "2024-09-12",
+    "time": "17:23:08",
+    "cryptocurrency": "Cardano (ADA)",
+    "type": "Sell",
+    "amount": "500.0",
+    "price": "0.3745",
+    "total": "187.25",
+    "fee": "0.19"
+  },
+  {
+    "id": 10,
+    "date": "2024-09-10",
+    "time": "12:08:41",
+    "cryptocurrency": "Ethereum (ETH)",
+    "type": "Buy",
+    "amount": "3.0",
+    "price": "2878.34",
+    "total": "8635.02",
+    "fee": "8.64"
+  },
+  {
+    "id": 11,
+    "date": "2024-09-08",
+    "time": "14:56:19",
+    "cryptocurrency": "Solana (SOL)",
+    "type": "Sell",
+    "amount": "10.0",
+    "price": "187.78",
+    "total": "1877.80",
+    "fee": "1.88"
+  },
+  {
+    "id": 12,
+    "date": "2024-09-05",
+    "time": "10:31:27",
+    "cryptocurrency": "Bitcoin (BTC)",
+    "type": "Buy",
+    "amount": "0.3",
+    "price": "69123.23",
+    "total": "20736.97",
+    "fee": "20.74"
+  },
+  {
+    "id": 13,
+    "date": "2024-09-03",
+    "time": "16:17:55",
+    "cryptocurrency": "Ethereum (ETH)",
+    "type": "Buy",
+    "amount": "4.0",
+    "price": "2823.34",
+    "total": "11293.36",
+    "fee": "11.29"
+  },
+  {
+    "id": 14,
+    "date": "2024-09-01",
+    "time": "09:42:13",
+    "cryptocurrency": "Cardano (ADA)",
+    "type": "Buy",
+    "amount": "750.0",
+    "price": "0.3589",
+    "total": "269.18",
+    "fee": "0.27"
+  },
+  {
+    "id": 15,
+    "date": "2024-08-29",
+    "time": "13:29:38",
+    "cryptocurrency": "Solana (SOL)",
+    "type": "Buy",
+    "amount": "20.0",
+    "price": "184.89",
+    "total": "3697.80",
+    "fee": "3.70"
+  },
+  {
+    "id": 16,
+    "date": "2024-08-27",
+    "time": "11:05:22",
+    "cryptocurrency": "Bitcoin (BTC)",
+    "type": "Sell",
+    "amount": "0.4",
+    "price": "67567.45",
+    "total": "27026.98",
+    "fee": "27.03"
+  },
+  {
+    "id": 17,
+    "date": "2024-08-24",
+    "time": "15:51:47",
+    "cryptocurrency": "Ethereum (ETH)",
+    "type": "Buy",
+    "amount": "2.0",
+    "price": "2767.12",
+    "total": "5534.24",
+    "fee": "5.53"
+  },
+  {
+    "id": 18,
+    "date": "2024-08-22",
+    "time": "08:18:34",
+    "cryptocurrency": "Cardano (ADA)",
+    "type": "Buy",
+    "amount": "1200.0",
+    "price": "0.3612",
+    "total": "433.44",
+    "fee": "0.43"
+  },
+  {
+    "id": 19,
+    "date": "2024-08-19",
+    "time": "14:33:56",
+    "cryptocurrency": "Solana (SOL)",
+    "type": "Sell",
+    "amount": "8.0",
+    "price": "173.12",
+    "total": "1384.96",
+    "fee": "1.38"
+  },
+  {
+    "id": 20,
+    "date": "2024-08-16",
+    "time": "10:47:11",
+    "cryptocurrency": "Bitcoin (BTC)",
+    "type": "Buy",
+    "amount": "0.6",
+    "price": "66234.56",
+    "total": "39740.74",
+    "fee": "39.74"
+  }
+]
