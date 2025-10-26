@@ -6,7 +6,22 @@ import { X } from "lucide-react"
 import { useSelectedBot } from "@/contexts/selected-bot-context"
 
 export function SelectedBotInfo() {
-  const { selectedBot, deselectBot } = useSelectedBot()
+  const { selectedBot, deselectBot, isLoading } = useSelectedBot()
+
+  // Show loading state while fetching initial bot selection
+  if (isLoading) {
+    return (
+      <div className="px-4 lg:px-6">
+        <Card>
+          <CardContent className="pt-6">
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">Loading bot information...</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
 
   if (!selectedBot) {
     return (

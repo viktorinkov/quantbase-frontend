@@ -1,6 +1,6 @@
 "use client"
 
-import React, { createContext, useContext, useState } from "react"
+import React, { createContext, useContext, useState, useEffect } from "react"
 
 interface Trade {
   pair: string
@@ -26,6 +26,7 @@ interface SelectedBotContextType {
   selectBot: (bot: Bot) => void
   deselectBot: () => void
   isUpdating: boolean
+  isLoading: boolean
 }
 
 const SelectedBotContext = createContext<SelectedBotContextType | undefined>(undefined)
@@ -36,6 +37,55 @@ const DEFAULT_USERNAME = "demo"
 export function SelectedBotProvider({ children }: { children: React.ReactNode }) {
   const [selectedBot, setSelectedBot] = useState<Bot | null>(null)
   const [isUpdating, setIsUpdating] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+
+  // Fetch the current model from the database on mount
+  useEffect(() => {
+    const fetchCurrentModel = async () => {
+      try {
+        // Fetch current user model
+        const userResponse = await fetch(`/api/user/model?username=${DEFAULT_USERNAME}`)
+        if (!userResponse.ok) {
+          console.error('Failed to fetch user model')
+          setIsLoading(false)
+          return
+        }
+
+        const userData = await userResponse.json()
+        const currentModelName = userData.user?.current_model
+
+        // If no model is selected, we're done
+        if (!currentModelName) {
+          setIsLoading(false)
+          return
+        }
+
+        // Fetch all available bots
+        const botsResponse = await fetch('/api/models')
+        if (!botsResponse.ok) {
+          console.error('Failed to fetch bots')
+          setIsLoading(false)
+          return
+        }
+
+        const botsData = await botsResponse.json()
+        const bots = botsData.models || []
+
+        // Find the bot that matches the current model
+        const matchingBot = bots.find((bot: Bot) => bot.modelName === currentModelName)
+
+        if (matchingBot) {
+          setSelectedBot(matchingBot)
+        }
+      } catch (error) {
+        console.error('Error fetching current model:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchCurrentModel()
+  }, [])
 
   const selectBot = async (bot: Bot) => {
     setIsUpdating(true)
@@ -102,7 +152,7 @@ export function SelectedBotProvider({ children }: { children: React.ReactNode })
   }
 
   return (
-    <SelectedBotContext.Provider value={{ selectedBot, selectBot, deselectBot, isUpdating }}>
+    <SelectedBotContext.Provider value={{ selectedBot, selectBot, deselectBot, isUpdating, isLoading }}>
       {children}
     </SelectedBotContext.Provider>
   )

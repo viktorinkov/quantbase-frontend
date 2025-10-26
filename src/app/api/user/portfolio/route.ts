@@ -9,6 +9,24 @@ if (!uri) {
 
 const client = new MongoClient(uri);
 
+// Helper function to get the current model from active_models
+function getCurrentModel(activeModels: Record<string, string>): string | null {
+  if (!activeModels || Object.keys(activeModels).length === 0) {
+    return null;
+  }
+
+  // Get all timestamps and sort them in descending order (most recent first)
+  const timestamps = Object.keys(activeModels).sort((a, b) => {
+    return new Date(b).getTime() - new Date(a).getTime();
+  });
+
+  // Return the model associated with the most recent timestamp
+  const currentModel = activeModels[timestamps[0]];
+
+  // If the model is "no_model", return null for backward compatibility
+  return currentModel === "no_model" ? null : currentModel;
+}
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -35,9 +53,26 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Get the current model from active_models timestamps
+    const currentModel = getCurrentModel(user.active_models || {});
+
+    // Determine which ticks collection to use based on selected model
+    let ticksCollectionName = 'ticks'; // Default collection
+
+    if (currentModel) {
+      // Get the bot configuration to find the ticks_ref
+      const botsDb = client.db('bots_db');
+      const botsCollection = botsDb.collection('bots');
+      const bot = await botsCollection.findOne({ model_name: currentModel });
+
+      if (bot && bot.ticks_ref) {
+        ticksCollectionName = bot.ticks_ref;
+      }
+    }
+
     // Get ticks data for portfolio calculation
     const solanaDb = client.db('solana_db');
-    const ticksCollection = solanaDb.collection('ticks');
+    const ticksCollection = solanaDb.collection(ticksCollectionName);
 
     // Get all ticks sorted by timestamp
     const ticks = await ticksCollection
@@ -129,7 +164,7 @@ export async function GET(request: NextRequest) {
       success: true,
       portfolio: {
         username: user.username,
-        current_model: user.current_model,
+        current_model: currentModel,
         owned_models: user.owned_models || [],
         balances: {
           usd: usdBalance,

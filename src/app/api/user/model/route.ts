@@ -10,6 +10,24 @@ if (!uri) {
 const client = new MongoClient(uri);
 const dbName = 'user_management';
 
+// Helper function to get the current model from active_models
+function getCurrentModel(activeModels: Record<string, string>): string | null {
+  if (!activeModels || Object.keys(activeModels).length === 0) {
+    return null;
+  }
+
+  // Get all timestamps and sort them in descending order (most recent first)
+  const timestamps = Object.keys(activeModels).sort((a, b) => {
+    return new Date(b).getTime() - new Date(a).getTime();
+  });
+
+  // Return the model associated with the most recent timestamp
+  const currentModel = activeModels[timestamps[0]];
+
+  // If the model is "no_model", return null for backward compatibility
+  return currentModel === "no_model" ? null : currentModel;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -36,18 +54,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create timestamp for the model change
+    // Create timestamp for the model change (Date format)
     const timestamp = new Date().toISOString();
 
-    // Prepare update object
-    const updateData: any = {
-      current_model: modelName || null,
-    };
-
-    // Add to active_models map with timestamp
-    // Use dot notation to add a new field to the active_models object
+    // Add to active_models map with timestamp as key and model name as value
+    // Format: { "2025-01-15T10:30:00.000Z": "momentum" }
+    // Use "no_model" when deselecting instead of null
     const activeModelsKey = `active_models.${timestamp}`;
-    updateData[activeModelsKey] = modelName || null;
+    const updateData: any = {
+      [activeModelsKey]: modelName || "no_model",
+    };
 
     // Update user in database
     const result = await usersCollection.updateOne(
@@ -107,9 +123,15 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Get the current model from active_models timestamps
+    const currentModel = getCurrentModel(user.active_models || {});
+
     return NextResponse.json({
       success: true,
-      user,
+      user: {
+        ...user,
+        current_model: currentModel, // Add computed current_model for backward compatibility
+      },
     });
   } catch (error) {
     console.error('Error fetching user:', error);
