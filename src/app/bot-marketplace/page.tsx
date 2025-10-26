@@ -40,16 +40,28 @@ export default function Page() {
         const response = await fetch('/api/bots')
         if (response.ok) {
           const data = await response.json()
-          // Convert backend bot format to frontend format
-          const convertedBots: Bot[] = data.map((bot: any) => ({
-            id: bot.id,
-            name: bot.name,
-            modelName: bot.name, // Use name as modelName for now
-            image: bot.image, // Use bot's stored image
-            todaysTrades: bot.todaysTrades || [],
-            stats: bot.stats
-          }))
-          setBots(convertedBots)
+
+          // If backend returns empty array or is not actually working, fallback to MongoDB
+          if (!Array.isArray(data) || data.length === 0) {
+            console.log('Backend returned empty bots, falling back to MongoDB models')
+            const staticResponse = await fetch('/api/models')
+            if (!staticResponse.ok) {
+              throw new Error('Failed to fetch models')
+            }
+            const staticData = await staticResponse.json()
+            setBots(staticData.models || [])
+          } else {
+            // Convert backend bot format to frontend format
+            const convertedBots: Bot[] = data.map((bot: any) => ({
+              id: bot.id,
+              name: bot.name,
+              modelName: bot.name, // Use name as modelName for now
+              image: bot.image, // Use bot's stored image
+              todaysTrades: bot.todaysTrades || [],
+              stats: bot.stats
+            }))
+            setBots(convertedBots)
+          }
         } else {
           // Fallback to static data if backend is not available
           const staticResponse = await fetch('/api/models')
@@ -82,20 +94,37 @@ export default function Page() {
       
       setBots(prev => [...prev, botWithDefaults])
       console.log('New bot created:', botWithDefaults)
-      
-      // Refresh the bot list to ensure consistency with backend
+
+      // Refresh the bot list to ensure consistency with MongoDB
       const response = await fetch('/api/bots')
       if (response.ok) {
         const data = await response.json()
-        const convertedBots: Bot[] = data.map((bot: any) => ({
-          id: bot.id,
-          name: bot.name,
-          modelName: bot.name,
-          image: bot.image, // Use bot's stored image
-          todaysTrades: bot.todaysTrades || [],
-          stats: bot.stats
-        }))
-        setBots(convertedBots)
+
+        // If backend returns empty array, fetch from MongoDB models instead
+        if (!Array.isArray(data) || data.length === 0) {
+          const modelsResponse = await fetch('/api/models')
+          if (modelsResponse.ok) {
+            const modelsData = await modelsResponse.json()
+            setBots(modelsData.models || [])
+          }
+        } else {
+          const convertedBots: Bot[] = data.map((bot: any) => ({
+            id: bot.id,
+            name: bot.name,
+            modelName: bot.name,
+            image: bot.image, // Use bot's stored image
+            todaysTrades: bot.todaysTrades || [],
+            stats: bot.stats
+          }))
+          setBots(convertedBots)
+        }
+      } else {
+        // Fallback to MongoDB models if backend fails
+        const modelsResponse = await fetch('/api/models')
+        if (modelsResponse.ok) {
+          const modelsData = await modelsResponse.json()
+          setBots(modelsData.models || [])
+        }
       }
     } catch (error) {
       console.error('Error handling bot creation:', error)

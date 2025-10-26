@@ -58,17 +58,60 @@ export async function GET(request: NextRequest) {
     // Get the current model from active_models timestamps
     const currentModel = getCurrentModel(user.active_models || {});
 
-    // Get all bots to aggregate trades from all ticks collections
+    // Get all bots from both bots_db and custom_bots_db to aggregate trades
     const botsDb = client.db('bots_db');
+    const customBotsDb = client.db('custom_bots_db');
     const botsCollection = botsDb.collection('bots');
-    const allBots = await botsCollection.find({}).toArray();
+    const customBotsCollection = customBotsDb.collection('bots');
+
+    // Fetch from both collections in parallel, handle if custom_bots_db doesn't exist
+    let standardBots = [];
+    let customBots = [];
+
+    try {
+      [standardBots, customBots] = await Promise.all([
+        botsCollection.find({}).toArray(),
+        customBotsCollection.find({}).toArray().catch(err => {
+          console.log('custom_bots_db might not exist in portfolio route, using empty array');
+          return [];
+        })
+      ]);
+    } catch (error) {
+      console.error('Error fetching bots in portfolio:', error);
+      // Try to at least get standard bots
+      standardBots = await botsCollection.find({}).toArray();
+    }
+
+    // Combine bots and mark their source
+    const allBots = [
+      ...standardBots.map(bot => ({ ...bot, source: 'standard' })),
+      ...customBots.map(bot => ({ ...bot, source: 'custom' }))
+    ] as any[];
 
     // Determine which ticks collection to use for current prices (based on selected model)
     let currentTicksCollectionName = 'ticks'; // Default collection
     if (currentModel) {
-      const currentBot = allBots.find(bot => bot.model_name === currentModel);
-      if (currentBot && currentBot.ticks_ref) {
-        currentTicksCollectionName = currentBot.ticks_ref;
+      // First try to find in standard bots
+      let currentBot = allBots.find(bot =>
+        bot.source === 'standard' && bot.model_name === currentModel
+      );
+
+      // If not found in standard bots, check custom bots by name
+      if (!currentBot) {
+        currentBot = allBots.find(bot =>
+          bot.source === 'custom' &&
+          bot.name.toLowerCase().replace(/\s+/g, '_') === currentModel
+        );
+      }
+
+      if (currentBot) {
+        if (currentBot.source === 'custom') {
+          // Use the model_type to determine ticks collection for custom bot
+          const baseModelType = currentBot.model_type || 'mean_reversion';
+          currentTicksCollectionName = `${baseModelType}_ticks`;
+        } else if (currentBot.ticks_ref) {
+          currentTicksCollectionName = currentBot.ticks_ref;
+        }
       }
     }
 
@@ -78,7 +121,14 @@ export async function GET(request: NextRequest) {
     // Collect ticks from all collections
     const allTicksCollections = new Set(['ticks']); // Always include default
     allBots.forEach(bot => {
-      if (bot.ticks_ref) {
+      if (bot.source === 'custom') {
+        // Generate ticks ref for custom bot
+        const modelType = bot.model_type || bot.name?.toLowerCase().replace(/\s+/g, '_');
+        if (modelType) {
+          allTicksCollections.add(`${modelType}_ticks`);
+        }
+      } else if (bot.ticks_ref) {
+        // Standard bot with explicit ticks_ref
         allTicksCollections.add(bot.ticks_ref);
       }
     });
@@ -152,16 +202,39 @@ export async function GET(request: NextRequest) {
           amountMatch = action.match(/^(BUY|SELL)\s+([\d.]+)/);
         }
 
-        // Default to 0.0010 SOL if no amount found (standard trade size)
-        const amount = amountMatch ? parseFloat(amountMatch[2]) : 0.0001;
-
         // Determine which model this trade came from
         const sourceCollection = tick._source_collection || 'ticks';
         let modelName = 'mean_reversion'; // default for 'ticks' collection
-        const sourceBot = allBots.find(bot => bot.ticks_ref === sourceCollection);
+
+        // Find the source bot by matching the ticks collection
+        const sourceBot = allBots.find(bot => {
+          if (bot.source === 'custom') {
+            const baseModelType = bot.model_type || 'mean_reversion';
+            return `${baseModelType}_ticks` === sourceCollection;
+          } else {
+            return bot.ticks_ref === sourceCollection;
+          }
+        });
+
+        // Get the base trade size from the bot's parameters (for custom bots)
+        let defaultTradeSize = 0.0001; // Fallback default - ALWAYS 0.0001 unless custom bot specifies otherwise
         if (sourceBot) {
-          modelName = sourceBot.model_name;
+          if (sourceBot.source === 'custom') {
+            // Use the custom bot's name as model name
+            modelName = sourceBot.name.toLowerCase().replace(/\s+/g, '_');
+            // For custom bots, check if they have a base_trade_size parameter
+            if (sourceBot.parameters?.base_trade_size) {
+              defaultTradeSize = sourceBot.parameters.base_trade_size;
+            }
+          } else {
+            modelName = sourceBot.model_name;
+            // Standard bots always use 0.0001
+            defaultTradeSize = 0.0001;
+          }
         }
+
+        // Use extracted amount or default to the bot's base trade size
+        const amount = amountMatch ? parseFloat(amountMatch[2]) : defaultTradeSize;
 
         return {
           id: tick._id.toString(),

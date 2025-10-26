@@ -13,11 +13,41 @@ export async function GET() {
     const client = await clientPromise;
 
     const botsDb = client.db('bots_db');
+    const customBotsDb = client.db('custom_bots_db');
     const solanaDb = client.db('solana_db');
 
-    // Get all bots from bots_db
+    // Get all bots from both bots_db and custom_bots_db
     const botsCollection = botsDb.collection('bots');
-    const bots = await botsCollection.find({}).toArray();
+    const customBotsCollection = customBotsDb.collection('bots');
+
+    // Fetch from both collections in parallel, handle if custom_bots_db doesn't exist
+    let standardBots = [];
+    let customBots = [];
+
+    try {
+      [standardBots, customBots] = await Promise.all([
+        botsCollection.find({}).toArray(),
+        customBotsCollection.find({}).toArray().catch(err => {
+          console.log('custom_bots_db might not exist yet, using empty array');
+          return [];
+        })
+      ]);
+    } catch (error) {
+      console.error('Error fetching bots:', error);
+      // Try to at least get standard bots
+      standardBots = await botsCollection.find({}).toArray();
+    }
+
+    console.log('Standard bots found:', standardBots.length);
+    console.log('Custom bots found:', customBots.length);
+
+    // Combine bots and mark their source
+    const allBots = [
+      ...standardBots.map(bot => ({ ...bot, source: 'standard' })),
+      ...customBots.map(bot => ({ ...bot, source: 'custom' }))
+    ] as any[];
+
+    console.log('Total bots after combining:', allBots.length);
 
     // Get today's start time (midnight UTC) - MongoDB best practice: use Date object, not ISO string
     const todayStart = new Date();
@@ -25,16 +55,37 @@ export async function GET() {
 
     // Map bots and fetch their today's trades
     const models = await Promise.all(
-      bots.map(async (bot) => {
-        const modelName = bot.model_name;
-        const ticksRef = bot.ticks_ref;
+      allBots.map(async (bot) => {
+        // Handle different schemas between bots_db and custom_bots_db
+        let modelName: string;
+        let ticksRef: string;
+        let displayName: string;
+        let baseTradeSize = 0.0001; // Default fallback
 
-        // Convert model_name to display name
-        // e.g., "momentum" -> "Momentum", "mean_reversion" -> "Mean Reversion"
-        const displayName = modelName
-          .split('_')
-          .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(' ');
+        if (bot.source === 'custom') {
+          // Custom bot schema: has 'name', 'model_type', and 'parameters.base_trade_size'
+          // Use the bot's name as the modelName for custom bots
+          modelName = bot.name.toLowerCase().replace(/\s+/g, '_');
+          displayName = bot.name; // Use the custom bot's name directly
+
+          // For ticks reference, use the model_type to determine which collection to use
+          const baseModelType = bot.model_type || 'mean_reversion';
+          ticksRef = `${baseModelType}_ticks`; // Use the base model type for ticks
+
+          if (bot.parameters?.base_trade_size) {
+            baseTradeSize = bot.parameters.base_trade_size;
+          }
+        } else {
+          // Standard bot schema: has 'model_name' and 'ticks_ref'
+          modelName = bot.model_name;
+          ticksRef = bot.ticks_ref;
+
+          // Convert model_name to display name
+          displayName = modelName
+            .split('_')
+            .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+        }
 
         // Fetch all of today's ticks from the referenced ticks collection
         // MongoDB stores dates as ISODate objects - query with Date object, not string
@@ -68,11 +119,14 @@ export async function GET() {
         }));
 
         return {
-          id: bot._id.toString(),
+          id: bot.id || bot._id.toString(), // Use bot.id for custom bots, _id for standard
           name: displayName,
           modelName: modelName,
           todaysTrades: todaysTradesFormatted,
-          stats: bot.stats || undefined
+          stats: bot.stats || undefined,
+          source: bot.source,
+          baseTradeSize: baseTradeSize,
+          parameters: bot.parameters || undefined // Include parameters for custom bots
         };
       })
     );
