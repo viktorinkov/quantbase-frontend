@@ -77,7 +77,7 @@ export function SelectedBotProvider({ children }: { children: React.ReactNode })
         // Fetch current user model
         const userResponse = await fetch(`/api/user/model?username=${DEFAULT_USERNAME}`)
         if (!userResponse.ok) {
-          console.error('Failed to fetch user model')
+          console.warn('User model not available:', userResponse.status, '- continuing without selected bot')
           setIsLoading(false)
           return
         }

@@ -1,7 +1,7 @@
-const { MongoClient } = require('mongodb');
+import { MongoClient } from 'mongodb';
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017';
-const DB_NAME = process.env.MONGODB_DB || 'bots_db';
+const DB_NAME = process.env.MONGODB_DB;
 
 async function inspectDatabase() {
   const client = new MongoClient(MONGODB_URI);
