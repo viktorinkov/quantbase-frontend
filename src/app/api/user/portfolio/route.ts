@@ -56,32 +56,61 @@ export async function GET(request: NextRequest) {
     // Get the current model from active_models timestamps
     const currentModel = getCurrentModel(user.active_models || {});
 
-    // Determine which ticks collection to use based on selected model
-    let ticksCollectionName = 'ticks'; // Default collection
+    // Get all bots to aggregate trades from all ticks collections
+    const botsDb = client.db('bots_db');
+    const botsCollection = botsDb.collection('bots');
+    const allBots = await botsCollection.find({}).toArray();
 
+    // Determine which ticks collection to use for current prices (based on selected model)
+    let currentTicksCollectionName = 'ticks'; // Default collection
     if (currentModel) {
-      // Get the bot configuration to find the ticks_ref
-      const botsDb = client.db('bots_db');
-      const botsCollection = botsDb.collection('bots');
-      const bot = await botsCollection.findOne({ model_name: currentModel });
-
-      if (bot && bot.ticks_ref) {
-        ticksCollectionName = bot.ticks_ref;
+      const currentBot = allBots.find(bot => bot.model_name === currentModel);
+      if (currentBot && currentBot.ticks_ref) {
+        currentTicksCollectionName = currentBot.ticks_ref;
       }
     }
 
-    // Get ticks data for portfolio calculation
+    // Get ticks data from ALL models for complete trading history
     const solanaDb = client.db('solana_db');
-    const ticksCollection = solanaDb.collection(ticksCollectionName);
 
-    // Get all ticks sorted by timestamp
-    const ticks = await ticksCollection
-      .find({})
-      .sort({ timestamp: 1 })
-      .toArray();
+    // Collect ticks from all collections
+    const allTicksCollections = new Set(['ticks']); // Always include default
+    allBots.forEach(bot => {
+      if (bot.ticks_ref) {
+        allTicksCollections.add(bot.ticks_ref);
+      }
+    });
 
-    // Get latest tick for current SOL price
-    const latestTick = await ticksCollection
+    // Fetch ticks from all collections and combine them
+    let allTicks = [];
+    for (const collectionName of allTicksCollections) {
+      try {
+        const collection = solanaDb.collection(collectionName);
+        const collectionTicks = await collection
+          .find({})
+          .sort({ timestamp: 1 })
+          .toArray();
+
+        // Add collection name to each tick for reference
+        const ticksWithSource = collectionTicks.map(tick => ({
+          ...tick,
+          _source_collection: collectionName
+        }));
+
+        allTicks = allTicks.concat(ticksWithSource);
+      } catch (error) {
+        console.error(`Error fetching from ${collectionName}:`, error);
+      }
+    }
+
+    // Sort all ticks by timestamp
+    const ticks = allTicks.sort((a, b) =>
+      new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+    );
+
+    // Get latest tick for current SOL price from the current model's collection
+    const currentTicksCollection = solanaDb.collection(currentTicksCollectionName);
+    const latestTick = await currentTicksCollection
       .findOne({}, { sort: { timestamp: -1 } });
 
     // Calculate portfolio metrics
@@ -94,18 +123,43 @@ export async function GET(request: NextRequest) {
     const totalPortfolioValue = usdBalance + solValueInUsd;
 
     // Calculate trades from ticks
-    // Parse action field which can be: "BUY 0.0010", "SELL 0.0010", or just "WARMUP"
+    // Parse action field which can be:
+    // - "BUY 0.0010 SOL @ $193.56"
+    // - "BUY 0.0010"
+    // - "BUY" or "SELL"
+    // - "WARMUP" (excluded)
+    // - "HOLD" (excluded)
     const trades = ticks
       .filter(tick => {
         if (!tick.action) return false;
-        // Only include entries that match "BUY [amount]" or "SELL [amount]" format
-        return /^(BUY|SELL)\s+[\d.]+$/.test(tick.action);
+        const action = tick.action.trim();
+        // Include any action that starts with BUY or SELL
+        return action.startsWith('BUY') || action.startsWith('SELL');
       })
       .map(tick => {
-        // Parse action and amount from string like "BUY 0.0010"
-        const actionMatch = tick.action.match(/^(BUY|SELL)\s+([\d.]+)$/);
-        const actionType = actionMatch ? actionMatch[1] : tick.action;
-        const amount = actionMatch ? parseFloat(actionMatch[2]) : (tick.wallet_balance_sol || 0);
+        const action = tick.action.trim();
+
+        // Determine action type (BUY or SELL)
+        const actionType = action.startsWith('BUY') ? 'BUY' : 'SELL';
+
+        // Try to extract amount from different formats:
+        // 1. "BUY 0.0010 SOL @ $193.56" or "SELL 0.0010 SOL @ $194.23"
+        let amountMatch = action.match(/^(BUY|SELL)\s+([\d.]+)\s+SOL/);
+        if (!amountMatch) {
+          // 2. "BUY 0.0010" or "SELL 0.0010"
+          amountMatch = action.match(/^(BUY|SELL)\s+([\d.]+)/);
+        }
+
+        // Default to 0.0010 SOL if no amount found (standard trade size)
+        const amount = amountMatch ? parseFloat(amountMatch[2]) : 0.0001;
+
+        // Determine which model this trade came from
+        const sourceCollection = tick._source_collection || 'ticks';
+        let modelName = 'mean_reversion'; // default for 'ticks' collection
+        const sourceBot = allBots.find(bot => bot.ticks_ref === sourceCollection);
+        if (sourceBot) {
+          modelName = sourceBot.model_name;
+        }
 
         return {
           id: tick._id.toString(),
@@ -113,8 +167,9 @@ export async function GET(request: NextRequest) {
           action: actionType,
           amount: amount,
           price_usd: tick.price_usd,
-          wallet_balance_sol: tick.wallet_balance_sol,
-          profit_loss_usd: tick.profit_loss_usd,
+          wallet_balance_sol: tick.wallet_balance_sol || 0,
+          profit_loss_usd: tick.profit_loss_usd || 0,
+          model: modelName, // Add model name to track which bot made the trade
         };
       });
 
