@@ -23,6 +23,7 @@ export interface PortfolioTrade {
   price_usd: number
   wallet_balance_sol: number
   profit_loss_usd: number
+  model?: string // Which model/bot made this trade
 }
 
 export interface PerformanceHistoryPoint {
