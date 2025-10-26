@@ -44,7 +44,7 @@ async function inspectDatabase() {
     console.log();
 
     // Inspect solana_db database
-    const dbName = 'solana-data';
+    const dbName = 'solana_db';
     console.log(`Inspecting database: ${dbName}`);
     const db = client.db(dbName);
 
