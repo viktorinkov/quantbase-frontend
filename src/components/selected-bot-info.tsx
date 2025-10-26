@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { X } from "lucide-react"
 import { useSelectedBot } from "@/contexts/selected-bot-context"
 import { BotParameterCustomizer } from "@/components/bot-parameter-customizer"
+import { BotTradesTable } from "@/components/bot-trades-table"
 
 export function SelectedBotInfo() {
   const { selectedBot, deselectBot, isLoading } = useSelectedBot()
@@ -61,9 +62,19 @@ export function SelectedBotInfo() {
           </div>
         </CardHeader>
         <CardContent>
-          <div>
-            <h3 className="font-semibold text-xl mb-1">{selectedBot.name}</h3>
-            <p className="text-sm text-muted-foreground">Model: {selectedBot.modelName}</p>
+          <div className="space-y-6">
+            <div>
+              <h3 className="font-semibold text-xl mb-1">{selectedBot.name}</h3>
+              <p className="text-sm text-muted-foreground">Model: {selectedBot.modelName}</p>
+            </div>
+            
+            {/* Trade History Section */}
+            <div>
+              <h4 className="text-lg font-medium mb-3">Trade History</h4>
+              <div className="border rounded-lg">
+                <BotTradesTable trades={selectedBot.todaysTrades || []} />
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>

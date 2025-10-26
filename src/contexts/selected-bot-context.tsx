@@ -47,6 +47,17 @@ export interface Bot {
   id: string
   name: string
   modelName: string
+  description?: string
+  architecture?: string
+  monthlyPerformance?: number
+  accuracy?: string
+  mape?: number
+  tags?: string[]
+  userCount?: number
+  totalTrades?: number
+  ranking?: number
+  totalBots?: number
+  topPercentile?: number
   todaysTrades: BotTrade[]
   stats?: BotStats
 }
@@ -91,15 +102,22 @@ export function SelectedBotProvider({ children }: { children: React.ReactNode })
         }
 
         // Fetch all available bots
-        const botsResponse = await fetch('/api/models')
-        if (!botsResponse.ok) {
-          console.error('Failed to fetch bots')
-          setIsLoading(false)
-          return
+        let bots = []
+        try {
+          const botsResponse = await fetch('/api/models')
+          if (botsResponse.ok) {
+            const botsData = await botsResponse.json()
+            bots = botsData.models || []
+          } else {
+            // Fallback to static data
+            const staticBotsModule = await import('@/data/bots.json')
+            bots = staticBotsModule.default
+          }
+        } catch (error) {
+          // Fallback to static data
+          const staticBotsModule = await import('@/data/bots.json')
+          bots = staticBotsModule.default
         }
-
-        const botsData = await botsResponse.json()
-        const bots = botsData.models || []
 
         // Find the bot that matches the current model
         const matchingBot = bots.find((bot: Bot) => bot.modelName === currentModelName)

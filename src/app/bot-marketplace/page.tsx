@@ -55,12 +55,9 @@ export default function Page() {
           setBots(convertedBots)
         } else {
           // Fallback to static data if backend is not available
-          const staticResponse = await fetch('/api/models')
-          if (!staticResponse.ok) {
-            throw new Error('Failed to fetch models')
-          }
-          const staticData = await staticResponse.json()
-          setBots(staticData.models || [])
+          const staticBotsModule = await import('@/data/bots.json')
+          const staticBots = staticBotsModule.default
+          setBots(staticBots)
         }
       } catch (err) {
         console.error('Error fetching bots:', err)
@@ -151,6 +148,17 @@ export default function Page() {
                     id={bot.id}
                     name={bot.name}
                     modelName={bot.modelName}
+                    description={bot.description}
+                    architecture={bot.architecture}
+                    monthlyPerformance={bot.monthlyPerformance}
+                    accuracy={bot.accuracy}
+                    mape={bot.mape}
+                    tags={bot.tags}
+                    userCount={bot.userCount}
+                    totalTrades={bot.totalTrades}
+                    ranking={bot.ranking}
+                    totalBots={bot.totalBots}
+                    topPercentile={bot.topPercentile}
                     todaysTrades={bot.todaysTrades}
                     stats={bot.stats}
                     index={index}
