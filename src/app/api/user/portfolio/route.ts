@@ -82,7 +82,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Fetch ticks from all collections and combine them
-    let allTicks = [];
+    let allTicks: any[] = [];
     for (const collectionName of allTicksCollections) {
       try {
         const collection = solanaDb.collection(collectionName);
@@ -191,7 +191,7 @@ export async function GET(request: NextRequest) {
     );
 
     // Use the portfolio_history from the user document if it exists
-    let performanceHistory = [];
+    let performanceHistory: any[] = [];
 
     if (user.portfolio_history && Array.isArray(user.portfolio_history)) {
       // User has portfolio_history stored as tuples [timestamp, usd_value, sol_value]
