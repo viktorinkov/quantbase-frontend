@@ -3,7 +3,6 @@
 import { AppSidebar } from "@/components/app-sidebar"
 import { CryptoTradesTable } from "@/components/crypto-trades-table"
 import { PortfolioPerformanceChart } from "@/components/portfolio-performance-chart"
-import { PortfolioSectionCards } from "@/components/portfolio-section-cards"
 import { SelectedBotInfo } from "@/components/selected-bot-info"
 import { SiteHeader } from "@/components/site-header"
 import {
@@ -12,22 +11,8 @@ import {
 } from "@/components/ui/sidebar"
 import { usePortfolio } from "@/hooks/use-portfolio"
 
-import portfolioData from "@/data/portfolio-data.json"
-
 export default function Page() {
   const { portfolio, isLoading, error } = usePortfolio()
-
-  // Transform portfolio data to match the existing component structure
-  const summary = portfolio ? {
-    totalValue: portfolio.balances.total_value_usd,
-    totalValueChange: portfolio.performance.performance_24h_percent,
-    totalTrades: portfolio.total_trades,
-    tradesThisMonth: portfolio.trades.length, // Last 50 trades as proxy
-    totalProfitLoss: portfolio.performance.total_profit_loss_usd,
-    profitLossPercent: (portfolio.performance.total_profit_loss_usd / portfolio.balances.total_value_usd) * 100,
-    winRate: portfolioData.summary.winRate, // Use mock data for now
-    winRateChange: portfolioData.summary.winRateChange, // Use mock data for now
-  } : portfolioData.summary
 
   // Transform trades data
   const trades = portfolio?.trades.map((trade, index) => {
@@ -43,7 +28,7 @@ export default function Page() {
       price: priceUsd.toFixed(2),
       total: (amount * priceUsd).toFixed(2),
     }
-  }) || portfolioData.trades
+  }) || []
 
   return (
     <SidebarProvider
@@ -71,10 +56,9 @@ export default function Page() {
                 </div>
               ) : (
                 <>
-                  <PortfolioSectionCards summary={summary} />
                   <div className="px-4 lg:px-6">
                     <PortfolioPerformanceChart
-                      performanceHistory={portfolio?.performance_history || portfolioData.performanceHistory}
+                      performanceHistory={portfolio?.performance_history || []}
                     />
                   </div>
                   <CryptoTradesTable data={trades} />
